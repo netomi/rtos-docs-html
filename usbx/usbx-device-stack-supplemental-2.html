@@ -1,0 +1,3945 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="generator" content="Asciidoctor 2.0.16">
+<meta name="description" content="The USB device RNDIS class allows for a USB host system to communicate with the device as a ethernet device. This class is based on the Microsoft implementation and is specific to Windows platforms.">
+<title>Chapter 2 - USBX Device Class Considerations</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:300,300italic,400,400italic,600,600italic%7CNoto+Serif:400,400italic,700,700italic%7CDroid+Sans+Mono:400,700">
+<style>
+/*! Asciidoctor default stylesheet | MIT License | https://asciidoctor.org */
+/* Uncomment the following line when using as a custom stylesheet */
+/* @import "https://fonts.googleapis.com/css?family=Open+Sans:300,300italic,400,400italic,600,600italic%7CNoto+Serif:400,400italic,700,700italic%7CDroid+Sans+Mono:400,700"; */
+html{font-family:sans-serif;-webkit-text-size-adjust:100%}
+a{background:none}
+a:focus{outline:thin dotted}
+a:active,a:hover{outline:0}
+h1{font-size:2em;margin:.67em 0}
+b,strong{font-weight:bold}
+abbr{font-size:.9em}
+abbr[title]{cursor:help;border-bottom:1px dotted #dddddf;text-decoration:none}
+dfn{font-style:italic}
+hr{height:0}
+mark{background:#ff0;color:#000}
+code,kbd,pre,samp{font-family:monospace;font-size:1em}
+pre{white-space:pre-wrap}
+q{quotes:"\201C" "\201D" "\2018" "\2019"}
+small{font-size:80%}
+sub,sup{font-size:75%;line-height:0;position:relative;vertical-align:baseline}
+sup{top:-.5em}
+sub{bottom:-.25em}
+img{border:0}
+svg:not(:root){overflow:hidden}
+figure{margin:0}
+audio,video{display:inline-block}
+audio:not([controls]){display:none;height:0}
+fieldset{border:1px solid silver;margin:0 2px;padding:.35em .625em .75em}
+legend{border:0;padding:0}
+button,input,select,textarea{font-family:inherit;font-size:100%;margin:0}
+button,input{line-height:normal}
+button,select{text-transform:none}
+button,html input[type=button],input[type=reset],input[type=submit]{-webkit-appearance:button;cursor:pointer}
+button[disabled],html input[disabled]{cursor:default}
+input[type=checkbox],input[type=radio]{padding:0}
+button::-moz-focus-inner,input::-moz-focus-inner{border:0;padding:0}
+textarea{overflow:auto;vertical-align:top}
+table{border-collapse:collapse;border-spacing:0}
+*,::before,::after{box-sizing:border-box}
+html,body{font-size:100%}
+body{background:#fff;color:rgba(0,0,0,.8);padding:0;margin:0;font-family:"Noto Serif","DejaVu Serif",serif;line-height:1;position:relative;cursor:auto;-moz-tab-size:4;-o-tab-size:4;tab-size:4;word-wrap:anywhere;-moz-osx-font-smoothing:grayscale;-webkit-font-smoothing:antialiased}
+a:hover{cursor:pointer}
+img,object,embed{max-width:100%;height:auto}
+object,embed{height:100%}
+img{-ms-interpolation-mode:bicubic}
+.left{float:left!important}
+.right{float:right!important}
+.text-left{text-align:left!important}
+.text-right{text-align:right!important}
+.text-center{text-align:center!important}
+.text-justify{text-align:justify!important}
+.hide{display:none}
+img,object,svg{display:inline-block;vertical-align:middle}
+textarea{height:auto;min-height:50px}
+select{width:100%}
+.subheader,.admonitionblock td.content>.title,.audioblock>.title,.exampleblock>.title,.imageblock>.title,.listingblock>.title,.literalblock>.title,.stemblock>.title,.openblock>.title,.paragraph>.title,.quoteblock>.title,table.tableblock>.title,.verseblock>.title,.videoblock>.title,.dlist>.title,.olist>.title,.ulist>.title,.qlist>.title,.hdlist>.title{line-height:1.45;color:#7a2518;font-weight:400;margin-top:0;margin-bottom:.25em}
+div,dl,dt,dd,ul,ol,li,h1,h2,h3,#toctitle,.sidebarblock>.content>.title,h4,h5,h6,pre,form,p,blockquote,th,td{margin:0;padding:0}
+a{color:#2156a5;text-decoration:underline;line-height:inherit}
+a:hover,a:focus{color:#1d4b8f}
+a img{border:0}
+p{line-height:1.6;margin-bottom:1.25em;text-rendering:optimizeLegibility}
+p aside{font-size:.875em;line-height:1.35;font-style:italic}
+h1,h2,h3,#toctitle,.sidebarblock>.content>.title,h4,h5,h6{font-family:"Open Sans","DejaVu Sans",sans-serif;font-weight:300;font-style:normal;color:#ba3925;text-rendering:optimizeLegibility;margin-top:1em;margin-bottom:.5em;line-height:1.0125em}
+h1 small,h2 small,h3 small,#toctitle small,.sidebarblock>.content>.title small,h4 small,h5 small,h6 small{font-size:60%;color:#e99b8f;line-height:0}
+h1{font-size:2.125em}
+h2{font-size:1.6875em}
+h3,#toctitle,.sidebarblock>.content>.title{font-size:1.375em}
+h4,h5{font-size:1.125em}
+h6{font-size:1em}
+hr{border:solid #dddddf;border-width:1px 0 0;clear:both;margin:1.25em 0 1.1875em}
+em,i{font-style:italic;line-height:inherit}
+strong,b{font-weight:bold;line-height:inherit}
+small{font-size:60%;line-height:inherit}
+code{font-family:"Droid Sans Mono","DejaVu Sans Mono",monospace;font-weight:400;color:rgba(0,0,0,.9)}
+ul,ol,dl{line-height:1.6;margin-bottom:1.25em;list-style-position:outside;font-family:inherit}
+ul,ol{margin-left:1.5em}
+ul li ul,ul li ol{margin-left:1.25em;margin-bottom:0}
+ul.square li ul,ul.circle li ul,ul.disc li ul{list-style:inherit}
+ul.square{list-style-type:square}
+ul.circle{list-style-type:circle}
+ul.disc{list-style-type:disc}
+ol li ul,ol li ol{margin-left:1.25em;margin-bottom:0}
+dl dt{margin-bottom:.3125em;font-weight:bold}
+dl dd{margin-bottom:1.25em}
+blockquote{margin:0 0 1.25em;padding:.5625em 1.25em 0 1.1875em;border-left:1px solid #ddd}
+blockquote,blockquote p{line-height:1.6;color:rgba(0,0,0,.85)}
+@media screen and (min-width:768px){h1,h2,h3,#toctitle,.sidebarblock>.content>.title,h4,h5,h6{line-height:1.2}
+h1{font-size:2.75em}
+h2{font-size:2.3125em}
+h3,#toctitle,.sidebarblock>.content>.title{font-size:1.6875em}
+h4{font-size:1.4375em}}
+table{background:#fff;margin-bottom:1.25em;border:1px solid #dedede;word-wrap:normal}
+table thead,table tfoot{background:#f7f8f7}
+table thead tr th,table thead tr td,table tfoot tr th,table tfoot tr td{padding:.5em .625em .625em;font-size:inherit;color:rgba(0,0,0,.8);text-align:left}
+table tr th,table tr td{padding:.5625em .625em;font-size:inherit;color:rgba(0,0,0,.8)}
+table tr.even,table tr.alt{background:#f8f8f7}
+table thead tr th,table tfoot tr th,table tbody tr td,table tr td,table tfoot tr td{line-height:1.6}
+h1,h2,h3,#toctitle,.sidebarblock>.content>.title,h4,h5,h6{line-height:1.2;word-spacing:-.05em}
+h1 strong,h2 strong,h3 strong,#toctitle strong,.sidebarblock>.content>.title strong,h4 strong,h5 strong,h6 strong{font-weight:400}
+.center{margin-left:auto;margin-right:auto}
+.stretch{width:100%}
+.clearfix::before,.clearfix::after,.float-group::before,.float-group::after{content:" ";display:table}
+.clearfix::after,.float-group::after{clear:both}
+:not(pre).nobreak{word-wrap:normal}
+:not(pre).nowrap{white-space:nowrap}
+:not(pre).pre-wrap{white-space:pre-wrap}
+:not(pre):not([class^=L])>code{font-size:.9375em;font-style:normal!important;letter-spacing:0;padding:.1em .5ex;word-spacing:-.15em;background:#f7f7f8;border-radius:4px;line-height:1.45;text-rendering:optimizeSpeed}
+pre{color:rgba(0,0,0,.9);font-family:"Droid Sans Mono","DejaVu Sans Mono",monospace;line-height:1.45;text-rendering:optimizeSpeed}
+pre code,pre pre{color:inherit;font-size:inherit;line-height:inherit}
+pre>code{display:block}
+pre.nowrap,pre.nowrap pre{white-space:pre;word-wrap:normal}
+em em{font-style:normal}
+strong strong{font-weight:400}
+.keyseq{color:rgba(51,51,51,.8)}
+kbd{font-family:"Droid Sans Mono","DejaVu Sans Mono",monospace;display:inline-block;color:rgba(0,0,0,.8);font-size:.65em;line-height:1.45;background:#f7f7f7;border:1px solid #ccc;border-radius:3px;box-shadow:0 1px 0 rgba(0,0,0,.2),inset 0 0 0 .1em #fff;margin:0 .15em;padding:.2em .5em;vertical-align:middle;position:relative;top:-.1em;white-space:nowrap}
+.keyseq kbd:first-child{margin-left:0}
+.keyseq kbd:last-child{margin-right:0}
+.menuseq,.menuref{color:#000}
+.menuseq b:not(.caret),.menuref{font-weight:inherit}
+.menuseq{word-spacing:-.02em}
+.menuseq b.caret{font-size:1.25em;line-height:.8}
+.menuseq i.caret{font-weight:bold;text-align:center;width:.45em}
+b.button::before,b.button::after{position:relative;top:-1px;font-weight:400}
+b.button::before{content:"[";padding:0 3px 0 2px}
+b.button::after{content:"]";padding:0 2px 0 3px}
+p a>code:hover{color:rgba(0,0,0,.9)}
+#header,#content,#footnotes,#footer{width:100%;margin:0 auto;max-width:62.5em;*zoom:1;position:relative;padding-left:.9375em;padding-right:.9375em}
+#header::before,#header::after,#content::before,#content::after,#footnotes::before,#footnotes::after,#footer::before,#footer::after{content:" ";display:table}
+#header::after,#content::after,#footnotes::after,#footer::after{clear:both}
+#content{margin-top:1.25em}
+#content::before{content:none}
+#header>h1:first-child{color:rgba(0,0,0,.85);margin-top:2.25rem;margin-bottom:0}
+#header>h1:first-child+#toc{margin-top:8px;border-top:1px solid #dddddf}
+#header>h1:only-child,body.toc2 #header>h1:nth-last-child(2){border-bottom:1px solid #dddddf;padding-bottom:8px}
+#header .details{border-bottom:1px solid #dddddf;line-height:1.45;padding-top:.25em;padding-bottom:.25em;padding-left:.25em;color:rgba(0,0,0,.6);display:flex;flex-flow:row wrap}
+#header .details span:first-child{margin-left:-.125em}
+#header .details span.email a{color:rgba(0,0,0,.85)}
+#header .details br{display:none}
+#header .details br+span::before{content:"\00a0\2013\00a0"}
+#header .details br+span.author::before{content:"\00a0\22c5\00a0";color:rgba(0,0,0,.85)}
+#header .details br+span#revremark::before{content:"\00a0|\00a0"}
+#header #revnumber{text-transform:capitalize}
+#header #revnumber::after{content:"\00a0"}
+#content>h1:first-child:not([class]){color:rgba(0,0,0,.85);border-bottom:1px solid #dddddf;padding-bottom:8px;margin-top:0;padding-top:1rem;margin-bottom:1.25rem}
+#toc{border-bottom:1px solid #e7e7e9;padding-bottom:.5em}
+#toc>ul{margin-left:.125em}
+#toc ul.sectlevel0>li>a{font-style:italic}
+#toc ul.sectlevel0 ul.sectlevel1{margin:.5em 0}
+#toc ul{font-family:"Open Sans","DejaVu Sans",sans-serif;list-style-type:none}
+#toc li{line-height:1.3334;margin-top:.3334em}
+#toc a{text-decoration:none}
+#toc a:active{text-decoration:underline}
+#toctitle{color:#7a2518;font-size:1.2em}
+@media screen and (min-width:768px){#toctitle{font-size:1.375em}
+body.toc2{padding-left:15em;padding-right:0}
+#toc.toc2{margin-top:0!important;background:#f8f8f7;position:fixed;width:15em;left:0;top:0;border-right:1px solid #e7e7e9;border-top-width:0!important;border-bottom-width:0!important;z-index:1000;padding:1.25em 1em;height:100%;overflow:auto}
+#toc.toc2 #toctitle{margin-top:0;margin-bottom:.8rem;font-size:1.2em}
+#toc.toc2>ul{font-size:.9em;margin-bottom:0}
+#toc.toc2 ul ul{margin-left:0;padding-left:1em}
+#toc.toc2 ul.sectlevel0 ul.sectlevel1{padding-left:0;margin-top:.5em;margin-bottom:.5em}
+body.toc2.toc-right{padding-left:0;padding-right:15em}
+body.toc2.toc-right #toc.toc2{border-right-width:0;border-left:1px solid #e7e7e9;left:auto;right:0}}
+@media screen and (min-width:1280px){body.toc2{padding-left:20em;padding-right:0}
+#toc.toc2{width:20em}
+#toc.toc2 #toctitle{font-size:1.375em}
+#toc.toc2>ul{font-size:.95em}
+#toc.toc2 ul ul{padding-left:1.25em}
+body.toc2.toc-right{padding-left:0;padding-right:20em}}
+#content #toc{border:1px solid #e0e0dc;margin-bottom:1.25em;padding:1.25em;background:#f8f8f7;border-radius:4px}
+#content #toc>:first-child{margin-top:0}
+#content #toc>:last-child{margin-bottom:0}
+#footer{max-width:none;background:rgba(0,0,0,.8);padding:1.25em}
+#footer-text{color:hsla(0,0%,100%,.8);line-height:1.44}
+#content{margin-bottom:.625em}
+.sect1{padding-bottom:.625em}
+@media screen and (min-width:768px){#content{margin-bottom:1.25em}
+.sect1{padding-bottom:1.25em}}
+.sect1:last-child{padding-bottom:0}
+.sect1+.sect1{border-top:1px solid #e7e7e9}
+#content h1>a.anchor,h2>a.anchor,h3>a.anchor,#toctitle>a.anchor,.sidebarblock>.content>.title>a.anchor,h4>a.anchor,h5>a.anchor,h6>a.anchor{position:absolute;z-index:1001;width:1.5ex;margin-left:-1.5ex;display:block;text-decoration:none!important;visibility:hidden;text-align:center;font-weight:400}
+#content h1>a.anchor::before,h2>a.anchor::before,h3>a.anchor::before,#toctitle>a.anchor::before,.sidebarblock>.content>.title>a.anchor::before,h4>a.anchor::before,h5>a.anchor::before,h6>a.anchor::before{content:"\00A7";font-size:.85em;display:block;padding-top:.1em}
+#content h1:hover>a.anchor,#content h1>a.anchor:hover,h2:hover>a.anchor,h2>a.anchor:hover,h3:hover>a.anchor,#toctitle:hover>a.anchor,.sidebarblock>.content>.title:hover>a.anchor,h3>a.anchor:hover,#toctitle>a.anchor:hover,.sidebarblock>.content>.title>a.anchor:hover,h4:hover>a.anchor,h4>a.anchor:hover,h5:hover>a.anchor,h5>a.anchor:hover,h6:hover>a.anchor,h6>a.anchor:hover{visibility:visible}
+#content h1>a.link,h2>a.link,h3>a.link,#toctitle>a.link,.sidebarblock>.content>.title>a.link,h4>a.link,h5>a.link,h6>a.link{color:#ba3925;text-decoration:none}
+#content h1>a.link:hover,h2>a.link:hover,h3>a.link:hover,#toctitle>a.link:hover,.sidebarblock>.content>.title>a.link:hover,h4>a.link:hover,h5>a.link:hover,h6>a.link:hover{color:#a53221}
+details,.audioblock,.imageblock,.literalblock,.listingblock,.stemblock,.videoblock{margin-bottom:1.25em}
+details{margin-left:1.25rem}
+details>summary{cursor:pointer;display:block;position:relative;line-height:1.6;margin-bottom:.625rem;-webkit-tap-highlight-color:transparent}
+details>summary::before{content:"";border:solid transparent;border-left:solid;border-width:.3em 0 .3em .5em;position:absolute;top:.5em;left:-1.25rem;transform:translateX(15%)}
+details[open]>summary::before{border:solid transparent;border-top:solid;border-width:.5em .3em 0;transform:translateY(15%)}
+details>summary::after{content:"";width:1.25rem;height:1em;position:absolute;top:.3em;left:-1.25rem}
+.admonitionblock td.content>.title,.audioblock>.title,.exampleblock>.title,.imageblock>.title,.listingblock>.title,.literalblock>.title,.stemblock>.title,.openblock>.title,.paragraph>.title,.quoteblock>.title,table.tableblock>.title,.verseblock>.title,.videoblock>.title,.dlist>.title,.olist>.title,.ulist>.title,.qlist>.title,.hdlist>.title{text-rendering:optimizeLegibility;text-align:left;font-family:"Noto Serif","DejaVu Serif",serif;font-size:1rem;font-style:italic}
+table.tableblock.fit-content>caption.title{white-space:nowrap;width:0}
+.paragraph.lead>p,#preamble>.sectionbody>[class=paragraph]:first-of-type p{font-size:1.21875em;line-height:1.6;color:rgba(0,0,0,.85)}
+.admonitionblock>table{border-collapse:separate;border:0;background:none;width:100%}
+.admonitionblock>table td.icon{text-align:center;width:80px}
+.admonitionblock>table td.icon img{max-width:none}
+.admonitionblock>table td.icon .title{font-weight:bold;font-family:"Open Sans","DejaVu Sans",sans-serif;text-transform:uppercase}
+.admonitionblock>table td.content{padding-left:1.125em;padding-right:1.25em;border-left:1px solid #dddddf;color:rgba(0,0,0,.6);word-wrap:anywhere}
+.admonitionblock>table td.content>:last-child>:last-child{margin-bottom:0}
+.exampleblock>.content{border:1px solid #e6e6e6;margin-bottom:1.25em;padding:1.25em;background:#fff;border-radius:4px}
+.exampleblock>.content>:first-child{margin-top:0}
+.exampleblock>.content>:last-child{margin-bottom:0}
+.sidebarblock{border:1px solid #dbdbd6;margin-bottom:1.25em;padding:1.25em;background:#f3f3f2;border-radius:4px}
+.sidebarblock>:first-child{margin-top:0}
+.sidebarblock>:last-child{margin-bottom:0}
+.sidebarblock>.content>.title{color:#7a2518;margin-top:0;text-align:center}
+.exampleblock>.content>:last-child>:last-child,.exampleblock>.content .olist>ol>li:last-child>:last-child,.exampleblock>.content .ulist>ul>li:last-child>:last-child,.exampleblock>.content .qlist>ol>li:last-child>:last-child,.sidebarblock>.content>:last-child>:last-child,.sidebarblock>.content .olist>ol>li:last-child>:last-child,.sidebarblock>.content .ulist>ul>li:last-child>:last-child,.sidebarblock>.content .qlist>ol>li:last-child>:last-child{margin-bottom:0}
+.literalblock pre,.listingblock>.content>pre{border-radius:4px;overflow-x:auto;padding:1em;font-size:.8125em}
+@media screen and (min-width:768px){.literalblock pre,.listingblock>.content>pre{font-size:.90625em}}
+@media screen and (min-width:1280px){.literalblock pre,.listingblock>.content>pre{font-size:1em}}
+.literalblock pre,.listingblock>.content>pre:not(.highlight),.listingblock>.content>pre[class=highlight],.listingblock>.content>pre[class^="highlight "]{background:#f7f7f8}
+.literalblock.output pre{color:#f7f7f8;background:rgba(0,0,0,.9)}
+.listingblock>.content{position:relative}
+.listingblock code[data-lang]::before{display:none;content:attr(data-lang);position:absolute;font-size:.75em;top:.425rem;right:.5rem;line-height:1;text-transform:uppercase;color:inherit;opacity:.5}
+.listingblock:hover code[data-lang]::before{display:block}
+.listingblock.terminal pre .command::before{content:attr(data-prompt);padding-right:.5em;color:inherit;opacity:.5}
+.listingblock.terminal pre .command:not([data-prompt])::before{content:"$"}
+.listingblock pre.highlightjs{padding:0}
+.listingblock pre.highlightjs>code{padding:1em;border-radius:4px}
+.listingblock pre.prettyprint{border-width:0}
+.prettyprint{background:#f7f7f8}
+pre.prettyprint .linenums{line-height:1.45;margin-left:2em}
+pre.prettyprint li{background:none;list-style-type:inherit;padding-left:0}
+pre.prettyprint li code[data-lang]::before{opacity:1}
+pre.prettyprint li:not(:first-child) code[data-lang]::before{display:none}
+table.linenotable{border-collapse:separate;border:0;margin-bottom:0;background:none}
+table.linenotable td[class]{color:inherit;vertical-align:top;padding:0;line-height:inherit;white-space:normal}
+table.linenotable td.code{padding-left:.75em}
+table.linenotable td.linenos{border-right:1px solid;opacity:.35;padding-right:.5em}
+pre.pygments .lineno{border-right:1px solid;opacity:.35;display:inline-block;margin-right:.75em}
+pre.pygments .lineno::before{content:"";margin-right:-.125em}
+.quoteblock{margin:0 1em 1.25em 1.5em;display:table}
+.quoteblock:not(.excerpt)>.title{margin-left:-1.5em;margin-bottom:.75em}
+.quoteblock blockquote,.quoteblock p{color:rgba(0,0,0,.85);font-size:1.15rem;line-height:1.75;word-spacing:.1em;letter-spacing:0;font-style:italic;text-align:justify}
+.quoteblock blockquote{margin:0;padding:0;border:0}
+.quoteblock blockquote::before{content:"\201c";float:left;font-size:2.75em;font-weight:bold;line-height:.6em;margin-left:-.6em;color:#7a2518;text-shadow:0 1px 2px rgba(0,0,0,.1)}
+.quoteblock blockquote>.paragraph:last-child p{margin-bottom:0}
+.quoteblock .attribution{margin-top:.75em;margin-right:.5ex;text-align:right}
+.verseblock{margin:0 1em 1.25em}
+.verseblock pre{font-family:"Open Sans","DejaVu Sans",sans-serif;font-size:1.15rem;color:rgba(0,0,0,.85);font-weight:300;text-rendering:optimizeLegibility}
+.verseblock pre strong{font-weight:400}
+.verseblock .attribution{margin-top:1.25rem;margin-left:.5ex}
+.quoteblock .attribution,.verseblock .attribution{font-size:.9375em;line-height:1.45;font-style:italic}
+.quoteblock .attribution br,.verseblock .attribution br{display:none}
+.quoteblock .attribution cite,.verseblock .attribution cite{display:block;letter-spacing:-.025em;color:rgba(0,0,0,.6)}
+.quoteblock.abstract blockquote::before,.quoteblock.excerpt blockquote::before,.quoteblock .quoteblock blockquote::before{display:none}
+.quoteblock.abstract blockquote,.quoteblock.abstract p,.quoteblock.excerpt blockquote,.quoteblock.excerpt p,.quoteblock .quoteblock blockquote,.quoteblock .quoteblock p{line-height:1.6;word-spacing:0}
+.quoteblock.abstract{margin:0 1em 1.25em;display:block}
+.quoteblock.abstract>.title{margin:0 0 .375em;font-size:1.15em;text-align:center}
+.quoteblock.excerpt>blockquote,.quoteblock .quoteblock{padding:0 0 .25em 1em;border-left:.25em solid #dddddf}
+.quoteblock.excerpt,.quoteblock .quoteblock{margin-left:0}
+.quoteblock.excerpt blockquote,.quoteblock.excerpt p,.quoteblock .quoteblock blockquote,.quoteblock .quoteblock p{color:inherit;font-size:1.0625rem}
+.quoteblock.excerpt .attribution,.quoteblock .quoteblock .attribution{color:inherit;font-size:.85rem;text-align:left;margin-right:0}
+p.tableblock:last-child{margin-bottom:0}
+td.tableblock>.content{margin-bottom:1.25em;word-wrap:anywhere}
+td.tableblock>.content>:last-child{margin-bottom:-1.25em}
+table.tableblock,th.tableblock,td.tableblock{border:0 solid #dedede}
+table.grid-all>*>tr>*{border-width:1px}
+table.grid-cols>*>tr>*{border-width:0 1px}
+table.grid-rows>*>tr>*{border-width:1px 0}
+table.frame-all{border-width:1px}
+table.frame-ends{border-width:1px 0}
+table.frame-sides{border-width:0 1px}
+table.frame-none>colgroup+*>:first-child>*,table.frame-sides>colgroup+*>:first-child>*{border-top-width:0}
+table.frame-none>:last-child>:last-child>*,table.frame-sides>:last-child>:last-child>*{border-bottom-width:0}
+table.frame-none>*>tr>:first-child,table.frame-ends>*>tr>:first-child{border-left-width:0}
+table.frame-none>*>tr>:last-child,table.frame-ends>*>tr>:last-child{border-right-width:0}
+table.stripes-all tr,table.stripes-odd tr:nth-of-type(odd),table.stripes-even tr:nth-of-type(even),table.stripes-hover tr:hover{background:#f8f8f7}
+th.halign-left,td.halign-left{text-align:left}
+th.halign-right,td.halign-right{text-align:right}
+th.halign-center,td.halign-center{text-align:center}
+th.valign-top,td.valign-top{vertical-align:top}
+th.valign-bottom,td.valign-bottom{vertical-align:bottom}
+th.valign-middle,td.valign-middle{vertical-align:middle}
+table thead th,table tfoot th{font-weight:bold}
+tbody tr th{background:#f7f8f7}
+tbody tr th,tbody tr th p,tfoot tr th,tfoot tr th p{color:rgba(0,0,0,.8);font-weight:bold}
+p.tableblock>code:only-child{background:none;padding:0}
+p.tableblock{font-size:1em}
+ol{margin-left:1.75em}
+ul li ol{margin-left:1.5em}
+dl dd{margin-left:1.125em}
+dl dd:last-child,dl dd:last-child>:last-child{margin-bottom:0}
+ol>li p,ul>li p,ul dd,ol dd,.olist .olist,.ulist .ulist,.ulist .olist,.olist .ulist{margin-bottom:.625em}
+ul.checklist,ul.none,ol.none,ul.no-bullet,ol.no-bullet,ol.unnumbered,ul.unstyled,ol.unstyled{list-style-type:none}
+ul.no-bullet,ol.no-bullet,ol.unnumbered{margin-left:.625em}
+ul.unstyled,ol.unstyled{margin-left:0}
+ul.checklist>li>p:first-child{margin-left:-1em}
+ul.checklist>li>p:first-child>.fa-square-o:first-child,ul.checklist>li>p:first-child>.fa-check-square-o:first-child{width:1.25em;font-size:.8em;position:relative;bottom:.125em}
+ul.checklist>li>p:first-child>input[type=checkbox]:first-child{margin-right:.25em}
+ul.inline{display:flex;flex-flow:row wrap;list-style:none;margin:0 0 .625em -1.25em}
+ul.inline>li{margin-left:1.25em}
+.unstyled dl dt{font-weight:400;font-style:normal}
+ol.arabic{list-style-type:decimal}
+ol.decimal{list-style-type:decimal-leading-zero}
+ol.loweralpha{list-style-type:lower-alpha}
+ol.upperalpha{list-style-type:upper-alpha}
+ol.lowerroman{list-style-type:lower-roman}
+ol.upperroman{list-style-type:upper-roman}
+ol.lowergreek{list-style-type:lower-greek}
+.hdlist>table,.colist>table{border:0;background:none}
+.hdlist>table>tbody>tr,.colist>table>tbody>tr{background:none}
+td.hdlist1,td.hdlist2{vertical-align:top;padding:0 .625em}
+td.hdlist1{font-weight:bold;padding-bottom:1.25em}
+td.hdlist2{word-wrap:anywhere}
+.literalblock+.colist,.listingblock+.colist{margin-top:-.5em}
+.colist td:not([class]):first-child{padding:.4em .75em 0;line-height:1;vertical-align:top}
+.colist td:not([class]):first-child img{max-width:none}
+.colist td:not([class]):last-child{padding:.25em 0}
+.thumb,.th{line-height:0;display:inline-block;border:4px solid #fff;box-shadow:0 0 0 1px #ddd}
+.imageblock.left{margin:.25em .625em 1.25em 0}
+.imageblock.right{margin:.25em 0 1.25em .625em}
+.imageblock>.title{margin-bottom:0}
+.imageblock.thumb,.imageblock.th{border-width:6px}
+.imageblock.thumb>.title,.imageblock.th>.title{padding:0 .125em}
+.image.left,.image.right{margin-top:.25em;margin-bottom:.25em;display:inline-block;line-height:0}
+.image.left{margin-right:.625em}
+.image.right{margin-left:.625em}
+a.image{text-decoration:none;display:inline-block}
+a.image object{pointer-events:none}
+sup.footnote,sup.footnoteref{font-size:.875em;position:static;vertical-align:super}
+sup.footnote a,sup.footnoteref a{text-decoration:none}
+sup.footnote a:active,sup.footnoteref a:active{text-decoration:underline}
+#footnotes{padding-top:.75em;padding-bottom:.75em;margin-bottom:.625em}
+#footnotes hr{width:20%;min-width:6.25em;margin:-.25em 0 .75em;border-width:1px 0 0}
+#footnotes .footnote{padding:0 .375em 0 .225em;line-height:1.3334;font-size:.875em;margin-left:1.2em;margin-bottom:.2em}
+#footnotes .footnote a:first-of-type{font-weight:bold;text-decoration:none;margin-left:-1.05em}
+#footnotes .footnote:last-of-type{margin-bottom:0}
+#content #footnotes{margin-top:-.625em;margin-bottom:0;padding:.75em 0}
+.gist .file-data>table{border:0;background:#fff;width:100%;margin-bottom:0}
+.gist .file-data>table td.line-data{width:99%}
+div.unbreakable{page-break-inside:avoid}
+.big{font-size:larger}
+.small{font-size:smaller}
+.underline{text-decoration:underline}
+.overline{text-decoration:overline}
+.line-through{text-decoration:line-through}
+.aqua{color:#00bfbf}
+.aqua-background{background:#00fafa}
+.black{color:#000}
+.black-background{background:#000}
+.blue{color:#0000bf}
+.blue-background{background:#0000fa}
+.fuchsia{color:#bf00bf}
+.fuchsia-background{background:#fa00fa}
+.gray{color:#606060}
+.gray-background{background:#7d7d7d}
+.green{color:#006000}
+.green-background{background:#007d00}
+.lime{color:#00bf00}
+.lime-background{background:#00fa00}
+.maroon{color:#600000}
+.maroon-background{background:#7d0000}
+.navy{color:#000060}
+.navy-background{background:#00007d}
+.olive{color:#606000}
+.olive-background{background:#7d7d00}
+.purple{color:#600060}
+.purple-background{background:#7d007d}
+.red{color:#bf0000}
+.red-background{background:#fa0000}
+.silver{color:#909090}
+.silver-background{background:#bcbcbc}
+.teal{color:#006060}
+.teal-background{background:#007d7d}
+.white{color:#bfbfbf}
+.white-background{background:#fafafa}
+.yellow{color:#bfbf00}
+.yellow-background{background:#fafa00}
+span.icon>.fa{cursor:default}
+a span.icon>.fa{cursor:inherit}
+.admonitionblock td.icon [class^="fa icon-"]{font-size:2.5em;text-shadow:1px 1px 2px rgba(0,0,0,.5);cursor:default}
+.admonitionblock td.icon .icon-note::before{content:"\f05a";color:#19407c}
+.admonitionblock td.icon .icon-tip::before{content:"\f0eb";text-shadow:1px 1px 2px rgba(155,155,0,.8);color:#111}
+.admonitionblock td.icon .icon-warning::before{content:"\f071";color:#bf6900}
+.admonitionblock td.icon .icon-caution::before{content:"\f06d";color:#bf3400}
+.admonitionblock td.icon .icon-important::before{content:"\f06a";color:#bf0000}
+.conum[data-value]{display:inline-block;color:#fff!important;background:rgba(0,0,0,.8);border-radius:50%;text-align:center;font-size:.75em;width:1.67em;height:1.67em;line-height:1.67em;font-family:"Open Sans","DejaVu Sans",sans-serif;font-style:normal;font-weight:bold}
+.conum[data-value] *{color:#fff!important}
+.conum[data-value]+b{display:none}
+.conum[data-value]::after{content:attr(data-value)}
+pre .conum[data-value]{position:relative;top:-.125em}
+b.conum *{color:inherit!important}
+.conum:not([data-value]):empty{display:none}
+dt,th.tableblock,td.content,div.footnote{text-rendering:optimizeLegibility}
+h1,h2,p,td.content,span.alt,summary{letter-spacing:-.01em}
+p strong,td.content strong,div.footnote strong{letter-spacing:-.005em}
+p,blockquote,dt,td.content,span.alt,summary{font-size:1.0625rem}
+p{margin-bottom:1.25rem}
+.sidebarblock p,.sidebarblock dt,.sidebarblock td.content,p.tableblock{font-size:1em}
+.exampleblock>.content{background:#fffef7;border-color:#e0e0dc;box-shadow:0 1px 4px #e0e0dc}
+.print-only{display:none!important}
+@page{margin:1.25cm .75cm}
+@media print{*{box-shadow:none!important;text-shadow:none!important}
+html{font-size:80%}
+a{color:inherit!important;text-decoration:underline!important}
+a.bare,a[href^="#"],a[href^="mailto:"]{text-decoration:none!important}
+a[href^="http:"]:not(.bare)::after,a[href^="https:"]:not(.bare)::after{content:"(" attr(href) ")";display:inline-block;font-size:.875em;padding-left:.25em}
+abbr[title]{border-bottom:1px dotted}
+abbr[title]::after{content:" (" attr(title) ")"}
+pre,blockquote,tr,img,object,svg{page-break-inside:avoid}
+thead{display:table-header-group}
+svg{max-width:100%}
+p,blockquote,dt,td.content{font-size:1em;orphans:3;widows:3}
+h2,h3,#toctitle,.sidebarblock>.content>.title{page-break-after:avoid}
+#header,#content,#footnotes,#footer{max-width:none}
+#toc,.sidebarblock,.exampleblock>.content{background:none!important}
+#toc{border-bottom:1px solid #dddddf!important;padding-bottom:0!important}
+body.book #header{text-align:center}
+body.book #header>h1:first-child{border:0!important;margin:2.5em 0 1em}
+body.book #header .details{border:0!important;display:block;padding:0!important}
+body.book #header .details span:first-child{margin-left:0!important}
+body.book #header .details br{display:block}
+body.book #header .details br+span::before{content:none!important}
+body.book #toc{border:0!important;text-align:left!important;padding:0!important;margin:0!important}
+body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-break-before:always}
+.listingblock code[data-lang]::before{display:block}
+#footer{padding:0 .9375em}
+.hide-on-print{display:none!important}
+.print-only{display:block!important}
+.hide-for-print{display:none!important}
+.show-for-print{display:inherit!important}}
+@media amzn-kf8,print{#header>h1:first-child{margin-top:1.25rem}
+.sect1{padding:0!important}
+.sect1+.sect1{border:0}
+#footer{background:none}
+#footer-text{color:rgba(0,0,0,.6);font-size:.9em}}
+@media amzn-kf8{#header,#content,#footnotes,#footer{padding:0}}
+</style>
+</head>
+<body class="article">
+<div id="header">
+<h1>Chapter 2 - USBX Device Class Considerations</h1>
+</div>
+<div id="content">
+<div class="sect1">
+<h2 id="_usb_device_rndis_class">USB Device RNDIS Class</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>The USB device RNDIS class allows for a USB host system to communicate with the device as a ethernet device. This class is based on the Microsoft implementation and is specific to Windows platforms.</p>
+</div>
+<div class="paragraph">
+<p>A RNDIS compliant device framework needs to be declared by the device stack. An example is found below.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-C" data-lang="C">unsigned char device_framework_full_speed[] = {
+    /* VID: 0x04b4
+    PID: 0x1127
+    */
+
+    /* Device Descriptor */
+    0x12, /* bLength */
+    0x01, /* bDescriptorType */
+    0x10, 0x01, /* bcdUSB */
+    0x02, /* bDeviceClass - CDC */
+    0x00, /* bDeviceSubClass */
+    0x00, /* bDeviceProtocol */
+    0x40, /* bMaxPacketSize0 */
+    0xb4, 0x04, /* idVendor */
+    0x27, 0x11, /* idProduct */
+    0x00, 0x01, /* bcdDevice */
+    0x01, /* iManufacturer */
+    0x02, /* iProduct */
+    0x03, /* iSerialNumber */
+    0x01, /* bNumConfigurations */
+
+    /* Configuration Descriptor */
+    0x09, /* bLength */
+    0x02, /* bDescriptorType */
+    0x38, 0x00, /* wTotalLength */
+    0x02, /* bNumInterfaces */
+    0x01, /* bConfigurationValue */
+    0x00, /* iConfiguration */
+    0x40, /* bmAttributes - Self-powered */
+    0x00, /* bMaxPower */
+
+    /* Interface Association Descriptor */
+    0x08, /* bLength */
+    0x0b, /* bDescriptorType */
+    0x00, /* bFirstInterface */
+    0x02, /* bInterfaceCount */
+    0x02, /* bFunctionClass - CDC - Communication */
+    0xff, /* bFunctionSubClass - Vendor Defined – In this case, RNDIS */
+    0x00, /* bFunctionProtocol - No class specific protocol required */
+    0x00, /* iFunction */
+
+    /* Interface Descriptor */
+    0x09, /* bLength */
+    0x04, /* bDescriptorType */
+    0x00, /* bInterfaceNumber */
+    0x00, /* bAlternateSetting */
+    0x01, /* bNumEndpoints */
+    0x02, /* bInterfaceClass - CDC - Communication */
+    0xff, /* bInterfaceSubClass - Vendor Defined – In this case, RNDIS */
+    0x00, /* bInterfaceProtocol - No class specific protocol required */
+    0x00, /* iInterface */
+
+    /* Endpoint Descriptor */
+    0x07, /* bLength */
+    0x05, /* bDescriptorType */
+    0x83, /* bEndpointAddress */
+    0x03, /* bmAttributes - Interrupt */
+    0x08, 0x00, /* wMaxPacketSize */
+    0xff, /* bInterval */
+
+    /* Interface Descriptor */
+    0x09, /* bLength */
+    0x04, /* bDescriptorType */
+    0x01, /* bInterfaceNumber */
+    0x00, /* bAlternateSetting */
+    0x02, /* bNumEndpoints */
+    0x0a, /* bInterfaceClass - CDC - Data */
+    0x00, /* bInterfaceSubClass - Should be 0x00 */
+    0x00, /* bInterfaceProtocol - No class specific protocol required */
+    0x00, /* iInterface */
+
+    /* Endpoint Descriptor */
+    0x07, /* bLength */
+    0x05, /* bDescriptorType */
+    0x02, /* bEndpointAddress */
+    0x02, /* bmAttributes - Bulk */
+    0x40, 0x00, /* wMaxPacketSize */
+    0x00, /* bInterval */
+
+    /* Endpoint Descriptor */
+    0x07, /* bLength */
+    0x05, /* bDescriptorType */
+    0x81, /* bEndpointAddress */
+    0x02, /* bmAttributes - Bulk */
+    0x40, 0x00, /* wMaxPacketSize */
+    0x00, /* bInterval */
+};</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>The RNDIS class uses a very similar device descriptor approach to the CDC-ACM and CDC-ECM and also requires a IAD descriptor. See the CDC-ACM class for definition and requirements for the device descriptor.</p>
+</div>
+<div class="paragraph">
+<p>The activation of the RNDIS class is as follows.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-C" data-lang="C">/* Set the parameters for callback when insertion/extraction of a CDC device. Set to NULL.*/
+
+parameter.ux_slave_class_rndis_instance_activate = UX_NULL;
+parameter.ux_slave_class_rndis_instance_deactivate = UX_NULL;
+
+/* Define a local NODE ID. */
+
+parameter.ux_slave_class_rndis_parameter_local_node_id[0] = 0x00;
+parameter.ux_slave_class_rndis_parameter_local_node_id[1] = 0x1e;
+parameter.ux_slave_class_rndis_parameter_local_node_id[2] = 0x58;
+parameter.ux_slave_class_rndis_parameter_local_node_id[3] = 0x41;
+parameter.ux_slave_class_rndis_parameter_local_node_id[4] = 0xb8;
+parameter.ux_slave_class_rndis_parameter_local_node_id[5] = 0x78;
+
+/* Define a remote NODE ID. */
+
+parameter.ux_slave_class_rndis_parameter_remote_node_id[0] = 0x00;
+parameter.ux_slave_class_rndis_parameter_remote_node_id[1] = 0x1e;
+parameter.ux_slave_class_rndis_parameter_remote_node_id[2] = 0x58;
+parameter.ux_slave_class_rndis_parameter_remote_node_id[3] = 0x41;
+parameter.ux_slave_class_rndis_parameter_remote_node_id[4] = 0xb8;
+parameter.ux_slave_class_rndis_parameter_remote_node_id[5] = 0x79;
+
+/* Set extra parameters used by the RNDIS query command with certain OIDs. */
+
+parameter.ux_slave_class_rndis_parameter_vendor_id = 0x04b4 ;
+parameter.ux_slave_class_rndis_parameter_driver_version = 0x1127;
+ux_utility_memory_copy(parameter.ux_slave_class_rndis_parameter_vendor_description,
+    "ELOGIC RNDIS", 12);
+
+/* Initialize the device rndis class. This class owns both interfaces. */
+status = ux_device_stack_class_register(_ux_system_slave_class_rndis_name,
+    ux_device_class_rndis_entry, 1,0, &amp;parameter);</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>As for the CDC-ECM, the RNDIS class requires 2 nodes, one local and one remote but there is no requirement to have a string descriptor describing the remote node.</p>
+</div>
+<div class="paragraph">
+<p>However due to the Microsoft messaging mechanism, some extra parameters are required. First the vendor ID has to be passed. Likewise, the driver version of the RNDIS. A vendor string must also be given.</p>
+</div>
+<div class="paragraph">
+<p>The RNDIS class has built-in APIs for transferring data both ways but they are hidden to the application as the user application will communicate with the USB Ethernet device through NetX Duo.</p>
+</div>
+<div class="paragraph">
+<p>The USBX RNDIS class is closely tied to the NetX Duo Network stack. An application using both NetX Duo and USBX RNDIS class will activate the NetX Duo network stack in its usual way but in addition needs to activate the USB network stack as follows.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-C" data-lang="C">/* Initialize the NetX Duo system. */
+
+nx_system_initialize();
+
+/* Perform the initialization of the network driver. This will initialize the USBX network layer.*/
+ux_network_driver_init();</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>The USB network stack needs to be activated only once and is not specific to RNDIS but is required by any USB class that requires NetX services.</p>
+</div>
+<div class="paragraph">
+<p>The RNDIS class will not be recognized by MAC OS and Linux hosts as it is specific to Microsoft operating systems. On Windows platforms a .inf file needs to be present on the host that matches the device descriptor. Microsoft supplies a template for the RNDIS class and it can be found in the usbx_windows_host_files directory. For more recent version of Windows the file RNDIS_Template.inf should be used. This file needs to be modified to reflect the PID/VID used by the device. The PID/VID will be specific to the final customer when the company and the product are registered with the USB-IF. In the inf file, the fields to modify are located here.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-Inf" data-lang="Inf">[DeviceList]
+%DeviceName%=DriverInstall, USB\\VID_xxxx&amp;PID_yyyy&amp;MI_00
+
+[DeviceList.NTamd64]
+%DeviceName%=DriverInstall, USB\\VID_xxxx&amp;PID_yyyy&amp;MI_00</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>In the device framework of the RNDIS device, the PID/VID are stored in the device descriptor (see the device descriptor declared above)</p>
+</div>
+<div class="paragraph">
+<p>When a USB host systems discovers the USB RNDIS device, it will mount a network interface and the device can be used with network protocol stack. See the host Operating System for reference.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_usb_device_dfu_class">USB Device DFU Class</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>The USB device DFU class allows for a USB host system to update the device firmware based on a host application. The DFU class is a USB-IF standard class.</p>
+</div>
+<div class="paragraph">
+<p>USBX DFU class is relatively simple. It device descriptor does not require anything but a control endpoint. Most of the time, this class will be embedded into a USB composite device. The device can be anything such as a storage device or a comm device and the added DFU interface can inform the host that the device can have its firmware updated on the fly.</p>
+</div>
+<div class="paragraph">
+<p>The DFU class works in 3 steps. First the device mounts as normal using the class exported. An application on the host (Windows or Linux) will exercise the DFU class and send a request to reset the device into DFU mode. The device will disappear from the bus for a short time (enough for the host and the device to detect a RESET sequence) and upon restarting, the device will be exclusively in DFU mode, waiting for the host application to send a firmware upgrade. When the firmware upgrade has been completed, the host application resets the device and upon re-enumeration the device will revert to its normal operation with the new firmware.</p>
+</div>
+<div class="paragraph">
+<p>A DFU device framework will look like this.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-C" data-lang="C">UCHAR device_framework_full_speed[] = {
+
+    /* Device descriptor */
+    0x12, 0x01, 0x10, 0x01, 0x00, 0x00, 0x00, 0x40,
+    0x99, 0x99, 0x00, 0x00, 0x00, 0x00, 0x01, 0x02,
+    0x03, 0x01,
+
+    /* Configuration descriptor */
+    0x09, 0x02, 0x1b, 0x00, 0x01, 0x01, 0x00, 0xc0,
+    0x32,
+
+    /* Interface descriptor for DFU. */
+    0x09, 0x04, 0x00, 0x00, 0x00, 0xFE, 0x01, 0x01, 0x00,
+
+    /* Functional descriptor for DFU. */
+    0x09, 0x21, 0x0f, 0xE8, 0x03, 0x40, 0x00, 0x00,
+    0x01,
+
+};</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>In this example, the DFU descriptor is not associated with any other classes. It has a simple interface descriptor and no other endpoints attached to it. There is a Functional descriptor that describes the specifics of the DFU capabilities of the device.</p>
+</div>
+<div class="paragraph">
+<p>The description of the DFU capabilities are as follows.</p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 20%;">
+<col style="width: 20%;">
+<col style="width: 20%;">
+<col style="width: 20%;">
+<col style="width: 20%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Name</th>
+<th class="tableblock halign-left valign-top">Offset</th>
+<th class="tableblock halign-left valign-top">Size</th>
+<th class="tableblock halign-left valign-top">type</th>
+<th class="tableblock halign-left valign-top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">bmAttributes</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">2</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">1</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Bit field</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Bit 3: device will perform a bus detach-attach sequence when it receives a DFU_DETACH request. The host must not issue a USB Reset. (bitWillDetach) 0 = no 1 = yes Bit 2: device is able to communicate via USB after Manifestation phase. (bitManifestationTolerant) 0 = no, must see bus reset 1 = yes Bit 1: upload capable (bitCanUpload) 0 = no 1 = yes Bit 0: download capable (bitCanDnload) 0 = no 1 = yes</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">wDetachTimeOut</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">3</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">2</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">number</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Time, in milliseconds, that the device will wait after receipt of the DFU_DETACH request. If this time elapses without a USB reset, then the device will terminate the Reconfiguration phase and revert back to normal operation. This represents the maximum time that the device can wait (depending on its timers, etc.). USBX sets this value to 1000 ms.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">wTransferSize</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">5</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">2</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">number</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Maximum number of bytes that the device can accept per control-write operation. USBX sets this value to 64 bytes.</p></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p>The declaration of the DFU class is as follows:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-C" data-lang="C">/* Store the DFU parameters. */
+
+dfu_parameter.ux_slave_class_dfu_parameter_instance_activate =
+    tx_demo_thread_dfu_activate;
+
+dfu_parameter.ux_slave_class_dfu_parameter_instance_deactivate =
+    tx_demo_thread_dfu_deactivate;
+
+dfu_parameter.ux_slave_class_dfu_parameter_read =
+    tx_demo_thread_dfu_read;
+
+dfu_parameter.ux_slave_class_dfu_parameter_write =
+    tx_demo_thread_dfu_write;
+
+dfu_parameter.ux_slave_class_dfu_parameter_get_status =
+    tx_demo_thread_dfu_get_status;
+
+dfu_parameter.ux_slave_class_dfu_parameter_notify =
+    tx_demo_thread_dfu_notify;
+
+dfu_parameter.ux_slave_class_dfu_parameter_framework =
+    device_framework_dfu;
+
+dfu_parameter.ux_slave_class_dfu_parameter_framework_length =
+    DEVICE_FRAMEWORK_LENGTH_DFU;
+
+/* Initialize the device dfu class. The class is connected with interface
+1 on configuration 1. */
+status = ux_device_stack_class_register(_ux_system_slave_class_dfu_name,
+    ux_device_class_dfu_entry, 1, 0,
+    (VOID *)&amp;dfu_parameter);
+
+if (status!=UX_SUCCESS) return;</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>The DFU class needs to work with a device firmware application specific to the target. Therefore it defines several call back to read and write blocks of firmware and to get status from the firmware update application. The DFU class also has a notify callback function to inform the application when a begin and end of transfer of the firmware occur.</p>
+</div>
+<div class="paragraph">
+<p>Following is the description of a typical DFU application flow.</p>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="./media/usbx-device-stack-supplemental/dfu-application-flow.png" alt="DFU application flow">
+</div>
+</div>
+<div class="paragraph">
+<p>The major challenge of the DFU class is getting the right application on the host to perform the download the firmware. There is no application supplied by Microsoft or the USB-IF. Some shareware exist and they work reasonably well on Linux and to a lesser extent on Windows.</p>
+</div>
+<div class="paragraph">
+<p>On Linux, one can use dfu-utils to be found here: <a href="https://wiki.openmoko.org/wiki/Dfu-util" class="bare">https://wiki.openmoko.org/wiki/Dfu-util</a> A lot of information on dfu utils can also be found on this link: <a href="https://github.com/libusb/libusb/wiki" class="bare">https://github.com/libusb/libusb/wiki</a></p>
+</div>
+<div class="paragraph">
+<p>The Linux implementation of DFU performs correctly the reset sequence between the host and the device and therefore the device does not need to do it. Linux can accept for the bmAttributes <em>bitWillDetach</em> to be 0. Windows on the other side requires the device to perform the reset.</p>
+</div>
+<div class="paragraph">
+<p>On Windows, the USB registry must be able to associate the USB device with its PID/VID and the USB library which will in turn be used by the DFU application. This can be easily done with the free utility Zadig which can be found here: <a href="https://sourceforge.net/projects/libwdi/files/zadig/" class="bare">https://sourceforge.net/projects/libwdi/files/zadig/</a>.</p>
+</div>
+<div class="paragraph">
+<p>Running Zadig for the first time will show this screen:</p>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="./media/usbx-device-stack-supplemental/zadig.png" alt="Running Zadig for the first time">
+</div>
+</div>
+<div class="paragraph">
+<p>From the device list, find your device and associate it with the libusb windows driver. This will bind the PID/VID of the device with the Windows USB library used by the DFU utilities.</p>
+</div>
+<div class="paragraph">
+<p>To operate the DFU command, simply unpack the zipped dfu utilities into a directory, making sure the libusb dll is also present in the same directory. The DFU utilities must be run from a DOS box at the command line.</p>
+</div>
+<div class="paragraph">
+<p>First, type the command <strong>dfu-util --l</strong> to determine whether the device is listed. If not, run Zadig to make sure the device is listed and associated with the USB library. You should see a screen as follows:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-Command-line" data-lang="Command-line">C:\usb specs\DFU\dfu-util-0.6&amp;gt;dfu-util -l dfu-util 0.6
+
+Copyright 2005-2008 Weston Schmidt, Harald Welte and OpenMoko Inc.
+Copyright 2010-2012 Tormod Volden and Stefan Schmidt
+This program is Free Software and has ABSOLUTELY NO WARRANTY
+Found Runtime: [0a5c:21bc] devnum=0, cfg=1, intf=3, alt=0, name="UNDEFINED"</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>The next step will be to prepare the file to be downloaded. The USBX DFU class does not perform any verification on this file and is agnostic of its internal format. This firmware file is very specific to the target but not to DFU nor to USBX.</p>
+</div>
+<div class="paragraph">
+<p>Then the dfu-util can be instructed to send the file by typing the following command:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-Command-line" data-lang="Command-line">dfu-util –R –t 64 -D file_to_download.hex</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>The dfu-util should display the file download process until the firmware has been completely downloaded.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_usb_device_pima_class_ptp_responder">USB Device PIMA Class (PTP Responder)</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>The USB device PIMA class allows for a USB host system (Initiator) to connect to a</p>
+</div>
+<div class="paragraph">
+<p>PIMA device (Responder) to transfer media files. USBX Pima Class is conforming to the USB-IF PIMA 15740 class also known as PTP class (for Picture Transfer Protocol).</p>
+</div>
+<div class="paragraph">
+<p>USBX device side PIMA class supports the following operations.</p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 33.3333%;">
+<col style="width: 33.3333%;">
+<col style="width: 33.3334%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Operation code</th>
+<th class="tableblock halign-left valign-top">Value</th>
+<th class="tableblock halign-left valign-top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">UX_DEVICE_CLASS_PIMA_OC_GET_DEVICE_INFO</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">0x1001</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Obtain the device supported operations and events</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">UX_DEVICE_CLASS_PIMA_OC_OPEN_SESSION</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">0x1002</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Open a session between the host and the device</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">UX_DEVICE_CLASS_PIMA_OC_CLOSE_SESSION</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">0x1003</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Close a session between the host and the device</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">UX_DEVICE_CLASS_PIMA_OC_GET_STORAGE_IDS</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">0x1004</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Returns the storage ID for the device. USBX PIMA uses one storage ID only</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">UX_DEVICE_CLASS_PIMA_OC_GET_STORAGE_INFO</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">0x1005</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Return information about the storage object such as max capacity and free space</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">UX_DEVICE_CLASS_PIMA_OC_GET_NUM_OBJECTS</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">0x1006</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Return the number of objects contained in the storage device</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">UX_DEVICE_CLASS_PIMA_OC_GET_OBJECT_HANDLES</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">0x1007</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Return an array of handles of the objects on the storage device</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">UX_DEVICE_CLASS_PIMA_OC_GET_OBJECT_INFO</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">0x1008</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Return information about an object such as the name of the object, its creation date, modification date</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">UX_DEVICE_CLASS_PIMA_OC_GET_OBJECT</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">0x1009</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Return the data pertaining to a specific object</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">UX_DEVICE_CLASS_PIMA_OC_GET_THUMB</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">0x100A</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Send the thumbnail if available about an object</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">UX_DEVICE_CLASS_PIMA_OC_DELETE_OBJECT</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">0x100B</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Delete an object on the media</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">UX_DEVICE_CLASS_PIMA_OC_SEND_OBJECT_INFO</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">0x100C</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Send to the device information about an object for its creation on the media</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">UX_DEVICE_CLASS_PIMA_OC_SEND_OBJECT</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">0x100D</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Send data for an object to the device</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">UX_DEVICE_CLASS_PIMA_OC_FORMAT_STORE</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">0x100F</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Clean the device media</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">UX_DEVICE_CLASS_PIMA_OC_RESET_DEVICE</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">0x0110</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Reset the target device</p></td>
+</tr>
+</tbody>
+</table>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 33.3333%;">
+<col style="width: 33.3333%;">
+<col style="width: 33.3334%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Operation Code</th>
+<th class="tableblock halign-left valign-top">Value</th>
+<th class="tableblock halign-left valign-top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">UX_DEVICE_CLASS_PIMA_EC_CANCEL_TRANSACTION</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">0x4001</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Cancels the current transaction</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">UX_DEVICE_CLASS_PIMA_EC_OBJECT_ADDED</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">0x4002</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">An object has been added to the device media and can be retrieved by the host.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">UX_DEVICE_CLASS_PIMA_EC_OBJECT_REMOVED</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">0x4003</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">An object has been deleted from the device media</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">UX_DEVICE_CLASS_PIMA_EC_STORE_ADDED</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">0x4004</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">A media has been added to the device</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">UX_DEVICE_CLASS_PIMA_EC_STORE_REMOVED</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">0x4005</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">A media has been deleted from the device</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">UX_DEVICE_CLASS_PIMA_EC_DEVICE_PROP_CHANGED</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">0x4006</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Device properties have changed</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">UX_DEVICE_CLASS_PIMA_EC_OBJECT_INFO_CHANGED</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">0x4007</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">An object information has changed</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">UX_DEVICE_CLASS_PIMA_EC_DEVICE_INFO_CHANGE</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">0x4008</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">A device has changed</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">UX_DEVICE_CLASS_PIMA_EC_REQUEST_OBJECT_TRANSFER</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">0x4009</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">The device requests the transfer of an object from the host</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">UX_DEVICE_CLASS_PIMA_EC_STORE_FULL</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">0x400A</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Device reports the media is full</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">UX_DEVICE_CLASS_PIMA_EC_DEVICE_RESET</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">0x400B</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Device reports it was reset</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">UX_DEVICE_CLASS_PIMA_EC_STORAGE_INFO_CHANGED</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">0x400C</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Storage information has changed on the device</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">UX_DEVICE_CLASS_PIMA_EC_CAPTURE_COMPLETE</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">0x400D</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Capture is completed</p></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p>The USBX PIMA device class uses a TX Thread to listen to PIMA commands from the host.</p>
+</div>
+<div class="paragraph">
+<p>A PIMA command is composed of a command block, a data block and a status phase.</p>
+</div>
+<div class="paragraph">
+<p>The function ux_device_class_pima_thread posts a request to the stack to receive a PIMA command from the host side. The PIMA command is decoded and verified for content. If the command block is valid, it branches to the appropriate command handler.</p>
+</div>
+<div class="paragraph">
+<p>Most PIMA commands can only be executed when a session has been opened by the host. The only exception is the command <strong>UX_DEVICE_CLASS_PIMA_OC_GET_DEVICE_INFO</strong>. With USBX PIMA implementation, only one session can be opened between an Initiator and Responder at any time. All transactions within the single session are blocking and no new transaction can begin before the previous one completed.</p>
+</div>
+<div class="paragraph">
+<p>PIMA transactions are composed of 3 phases, a command phase, an optional data phase and a response phase. If a data phase is present, it can only be in one direction.</p>
+</div>
+<div class="paragraph">
+<p>The Initiator always determines the flow of the PIMA operations but the Responder can initiate events back to the Initiator to inform status changes that happened during a session.</p>
+</div>
+<div class="paragraph">
+<p>The following diagram shows the transfer of a data object between the host and the PIMA device class.</p>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="./media/usbx-device-stack-supplemental/pima-transactions.png" alt="PIMA transactions">
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_initialization_of_the_pima_device_class">Initialization of the PIMA device class</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>The PIMA device class needs some parameters supplied by the application during the initialization.</p>
+</div>
+<div class="paragraph">
+<p>The following parameters describe the device and storage information.</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><code>ux_device_class_pima_manufacturer</code></p>
+</li>
+<li>
+<p><code>ux_device_class_pima_model</code></p>
+</li>
+<li>
+<p><code>ux_device_class_pima_device_version</code></p>
+</li>
+<li>
+<p><code>ux_device_class_pima_serial_number</code></p>
+</li>
+<li>
+<p><code>ux_device_class_pima_storage_id</code></p>
+</li>
+<li>
+<p><code>ux_device_class_pima_storage_type</code></p>
+</li>
+<li>
+<p><code>ux_device_class_pima_storage_file_system_type</code></p>
+</li>
+<li>
+<p><code>ux_device_class_pima_storage_access_capability</code></p>
+</li>
+<li>
+<p><code>ux_device_class_pima_storage_max_capacity_low</code></p>
+</li>
+<li>
+<p><code>ux_device_class_pima_storage_max_capacity_high</code></p>
+</li>
+<li>
+<p><code>ux_device_class_pima_storage_free_space_low</code></p>
+</li>
+<li>
+<p><code>ux_device_class_pima_storage_free_space_high</code></p>
+</li>
+<li>
+<p><code>ux_device_class_pima_storage_free_space_image</code></p>
+</li>
+<li>
+<p><code>ux_device_class_pima_storage_description</code></p>
+</li>
+<li>
+<p><code>ux_device_class_pima_storage_volume_label</code></p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>The PIMA class also requires the registration of callback into the application to inform the application of certain events or retrieve/store data from/to the local media. The callbacks are as follows.</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><code>ux_device_class_pima_object_number_get</code></p>
+</li>
+<li>
+<p><code>ux_device_class_pima_object_handles_get</code></p>
+</li>
+<li>
+<p><code>ux_device_class_pima_object_info_get</code></p>
+</li>
+<li>
+<p><code>ux_device_class_pima_object_data_get</code></p>
+</li>
+<li>
+<p><code>ux_device_class_pima_object_info_send</code></p>
+</li>
+<li>
+<p><code>ux_device_class_pima_object_data_send</code></p>
+</li>
+<li>
+<p><code>ux_device_class_pima_object_delete</code></p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>The following example shows how to initialize the client side of PIMA. This example uses Pictbridge as a client for PIMA.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-C" data-lang="C">/* Initialize the first XML object valid in the pictbridge instance.
+
+Initialize the handle, type and file name.
+
+The storage handle and the object handle have a fixed value of 1 in our implementation. */
+
+object_info = pictbridge -&gt; ux_pictbridge_object_client;
+
+object_info -&gt; ux_device_class_pima_object_format = UX_DEVICE_CLASS_PIMA_OFC_SCRIPT;
+object_info -&gt; ux_device_class_pima_object_storage_id = 1;
+object_info -&gt; ux_device_class_pima_object_handle_id = 2;
+
+ux_utility_string_to_unicode(_ux_pictbridge_ddiscovery_name,
+    object_info -&gt; ux_device_class_pima_object_filename);
+
+/* Initialize the head and tail of the notification round robin buffers.
+   At first, the head and tail are pointing to the beginning of the array.
+*/
+
+pictbridge -&gt; ux_pictbridge_event_array_head =
+    pictbridge -&gt; ux_pictbridge_event_array;
+
+pictbridge -&gt; ux_pictbridge_event_array_tail =
+    pictbridge -&gt; ux_pictbridge_event_array;
+
+pictbridge -&gt; ux_pictbridge_event_array_end =
+    pictbridge -&gt; ux_pictbridge_event_array +
+    UX_PICTBRIDGE_MAX_EVENT_NUMBER;
+
+/* Initialize the pima device parameter. */
+pictbridge -&gt; ux_pictbridge_pima_parameter.ux_device_class_pima_parameter_manufacturer =
+    pictbridge -&gt; ux_pictbridge_dpslocal.ux_pictbridge_devinfo_vendor_name;
+
+pictbridge -&gt; ux_pictbridge_pima_parameter.ux_device_class_pima_parameter_model =
+    pictbridge -&gt; ux_pictbridge_dpslocal.ux_pictbridge_devinfo_product_name;
+
+pictbridge -&gt; ux_pictbridge_pima_parameter.ux_device_class_pima_parameter_serial_number =
+    pictbridge -&gt; ux_pictbridge_dpslocal.ux_pictbridge_devinfo_serial_no;
+
+pictbridge -&gt; ux_pictbridge_pima_parameter.ux_device_class_pima_parameter_storage_id = 1;
+
+pictbridge -&gt; ux_pictbridge_pima_parameter.ux_device_class_pima_parameter_storage_type =
+    UX_DEVICE_CLASS_PIMA_STC_FIXED_RAM;
+
+pictbridge -&gt; ux_pictbridge_pima_parameter.ux_device_class_pima_parameter_storage_file_system_type =
+    UX_DEVICE_CLASS_PIMA_FSTC_GENERIC_FLAT;
+
+pictbridge -&gt; ux_pictbridge_pima_parameter.ux_device_class_pima_parameter_storage_access_capability =
+    UX_DEVICE_CLASS_PIMA_AC_READ_WRITE;
+
+pictbridge -&gt; ux_pictbridge_pima_parameter.ux_device_class_pima_parameter_storage_max_capacity_low =
+    pictbridge -&gt; ux_pictbridge_dpslocal.ux_pictbridge_devinfo_storage_size;
+
+pictbridge -&gt; ux_pictbridge_pima_parameter.ux_device_class_pima_parameter_storage_max_capacity_high = 0;
+
+pictbridge -&gt; ux_pictbridge_pima_parameter.ux_device_class_pima_parameter_storage_free_space_low =
+    pictbridge -&gt; ux_pictbridge_dpslocal.ux_pictbridge_devinfo_storage_size;
+
+pictbridge -&gt; ux_pictbridge_pima_parameter.ux_device_class_pima_parameter_storage_free_space_high = 0;
+
+pictbridge -&gt; ux_pictbridge_pima_parameter.ux_device_class_pima_parameter_storage_free_space_image = 0;
+
+pictbridge -&gt; ux_pictbridge_pima_parameter.ux_device_class_pima_parameter_storage_description =
+    _ux_pictbridge_volume_description;
+
+pictbridge -&gt; ux_pictbridge_pima_parameter.ux_device_class_pima_parameter_storage_volume_label =
+    _ux_pictbridge_volume_label;
+
+pictbridge -&gt; ux_pictbridge_pima_parameter.ux_device_class_pima_parameter_object_number_get =
+    ux_pictbridge_dpsclient_object_number_get;
+
+pictbridge -&gt; ux_pictbridge_pima_parameter.ux_device_class_pima_parameter_object_handles_get =
+    ux_pictbridge_dpsclient_object_handles_get;
+
+pictbridge -&gt; ux_pictbridge_pima_parameter.ux_device_class_pima_parameter_object_info_get =
+    ux_pictbridge_dpsclient_object_info_get;
+
+pictbridge -&gt; ux_pictbridge_pima_parameter.ux_device_class_pima_parameter_object_data_get =
+    ux_pictbridge_dpsclient_object_data_get;
+
+pictbridge -&gt; ux_pictbridge_pima_parameter.ux_device_class_pima_parameter_object_info_send =
+    ux_pictbridge_dpsclient_object_info_send;
+
+pictbridge -&gt; ux_pictbridge_pima_parameter.ux_device_class_pima_parameter_object_data_send =
+    ux_pictbridge_dpsclient_object_data_send;
+
+pictbridge -&gt; ux_pictbridge_pima_parameter.ux_device_class_pima_parameter_object_delete =
+    ux_pictbridge_dpsclient_object_delete;
+
+/* Store the instance owner. */
+pictbridge -&gt; ux_pictbridge_pima_parameter.ux_device_class_pima_parameter_application =
+    (VOID *) pictbridge;
+
+/* Initialize the device pima class. The class is connected with interface 0 */
+
+status = ux_device_stack_class_register(_ux_system_slave_class_pima_name,
+    ux_device_class_pima_entry, 1, 0, (VOID *)&amp;pictbridge -&gt; ux_pictbridge_pima_parameter);
+
+/* Check status. */
+if (status != UX_SUCCESS)</code></pre>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_ux_device_class_pima_object_add">ux_device_class_pima_object_add</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Adding an object and sending the event to the host</p>
+</div>
+<div class="sect2">
+<h3 id="_prototype">Prototype</h3>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-C" data-lang="C">UINT ux_device_class_pima_object_add(
+    UX_SLAVE_CLASS_PIMA *pima,
+    ULONG object_handle);</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_description">Description</h3>
+<div class="paragraph">
+<p>This function is called when the PIMA class needs to add an object and inform the host.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_parameters">Parameters</h3>
+<div class="ulist">
+<ul>
+<li>
+<p><strong>pima</strong>: Pointer to the pima class instance</p>
+</li>
+<li>
+<p><strong>object_handle</strong>: Handle of the object.</p>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_example">Example</h3>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-C" data-lang="C">/* Send the notification to the host that an object has been added. */
+
+status = ux_device_class_pima_object_add(pima, UX_PICTBRIDGE_OBJECT_HANDLE_CLIENT_REQUEST);</code></pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_ux_device_class_pima_object_number_get">ux_device_class_pima_object_number_get</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Getting the object number from the application</p>
+</div>
+<div class="sect2">
+<h3 id="_prototype_2">Prototype</h3>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-C" data-lang="C">UINT ux_device_class_pima_object_number_get(
+    UX_SLAVE_CLASS_PIMA *pima,
+    ULONG *object_number);</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_description_2">Description</h3>
+<div class="paragraph">
+<p>This function is called when the PIMA class needs to retrieve the number of objects in the local system and send it back to the host.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_parameters_2">Parameters</h3>
+<div class="ulist">
+<ul>
+<li>
+<p><strong>pima</strong>: Pointer to the pima class instance</p>
+</li>
+<li>
+<p><strong>object_number</strong>: Address of the number of objects to be returned</p>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_example_2">Example</h3>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-C" data-lang="C">UINT ux_pictbridge_dpsclient_object_number_get(UX_SLAVE_CLASS_PIMA *pima, ULONG *number_objects)
+{
+    /* We force the number of objects to be 1 only here. This will be the XML scripts. */
+    *number_objects = 1;
+    return(UX_SUCCESS);
+}</code></pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_ux_device_class_pima_object_handles_get">ux_device_class_pima_object_handles_get</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Return the object handle array</p>
+</div>
+<div class="sect2">
+<h3 id="_prototype_3">Prototype</h3>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-C" data-lang="C">UINT **ux_device_class_pima_object_handles_get**(
+    UX_SLAVE_CLASS_PIMA_STRUCT *pima,
+    ULONG object_handles_format_code,
+    ULONG object_handles_association,
+    ULONG *object_handles_array,
+    ULONG object_handles_max_number);</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_description_3">Description</h3>
+<div class="paragraph">
+<p>This function is called when the PIMA class needs to retrieve the object handles array in the local system and send it back to the host.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_parameters_3">Parameters</h3>
+<div class="ulist">
+<ul>
+<li>
+<p><strong>pima</strong>: Pointer to the pima class instance.</p>
+</li>
+<li>
+<p><strong>object_handles_format_code</strong>: Format code for the handles</p>
+</li>
+<li>
+<p><strong>object_handles_association</strong>: Object association code</p>
+</li>
+<li>
+<p><strong>object_handle_array</strong>: Address where to store the handles</p>
+</li>
+<li>
+<p><strong>object_handles_max_number</strong>: Maximum number of handles in the array</p>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_example_3">Example</h3>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-C" data-lang="C">UINT ux_pictbridge_dpsclient_object_handles_get(UX_SLAVE_CLASS_PIMA *pima,
+    ULONG object_handles_format_code,
+    ULONG object_handles_association,
+    ULONG *object_handles_array,
+    ULONG object_handles_max_number)
+{
+
+    UX_PICTBRIDGE *pictbridge;
+    UX_SLAVE_CLASS_PIMA_OBJECT *object_info;
+
+    /* Get the pointer to the Pictbridge instance. */
+    pictbridge = (UX_PICTBRIDGE *) pima -&gt; ux_device_class_pima_application;
+
+    /* Set the pima pointer to the pictbridge instance. */
+    pictbridge -&gt; ux_pictbridge_pima = (VOID *) pima;
+
+    /* We say we have one object but the caller might specify different format code and associations. */
+    object_info = pictbridge -&gt; ux_pictbridge_object_client;
+
+    /* Insert in the array the number of found handles so far: 0. */
+    ux_utility_long_put((UCHAR *)object_handles_array, 0);
+
+    /* Check the type demanded. */
+
+    if (object_handles_format_code == 0 || object_handles_format_code ==
+        0xFFFFFFFF || object_info -&gt; ux_device_class_pima_object_format ==
+        object_handles_format_code)
+    {
+        /* Insert in the array the number of found handles. This handle is for the client XML script. */
+        ux_utility_long_put((UCHAR *)object_handles_array, 1);
+
+        /* Adjust the array to point after the number of elements. */
+        object_handles_array++;
+
+        /* We have a candidate. Store the handle. */
+        ux_utility_long_put((UCHAR *)object_handles_array, object_info -&gt;
+            ux_device_class_pima_object_handle_id);
+    }
+
+    return(UX_SUCCESS);
+}</code></pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_ux_device_class_pima_object_info_get">ux_device_class_pima_object_info_get</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Return the object information</p>
+</div>
+<div class="sect2">
+<h3 id="_prototype_4">Prototype</h3>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-C" data-lang="C">UINT ux_device_class_pima_object_info_get(
+    struct UX_SLAVE_CLASS_PIMA_STRUCT *pima,
+    ULONG object_handle,
+    UX_SLAVE_CLASS_PIMA_OBJECT **object);</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_description_4">Description</h3>
+<div class="paragraph">
+<p>This function is called when the PIMA class needs to retrieve the object handles array in the local system and send it back to the host.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_parameters_4">Parameters</h3>
+<div class="ulist">
+<ul>
+<li>
+<p><strong>pima</strong>: Pointer to the pima class instance.</p>
+</li>
+<li>
+<p><strong>object_handles</strong>: Handle of the object</p>
+</li>
+<li>
+<p><strong>object</strong>: Object pointer address</p>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_example_4">Example</h3>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-C" data-lang="C">UINT ux_pictbridge_dpsclient_object_info_get(UX_SLAVE_CLASS_PIMA *pima,
+    ULONG object_handle, UX_SLAVE_CLASS_PIMA_OBJECT **object)
+{
+    UX_PICTBRIDGE *pictbridge;
+    UX_SLAVE_CLASS_PIMA_OBJECT *object_info;
+    /* Get the pointer to the Pictbridge instance. */
+    pictbridge = (UX_PICTBRIDGE *)pima -&gt; ux_device_class_pima_application;
+
+    /* Check the object handle. If this is handle 1 or 2 , we need to return the XML script object.
+       If the handle is not 1 or 2, this is a JPEG picture or other object to be printed. */
+    if ((object_handle == UX_PICTBRIDGE_OBJECT_HANDLE_HOST_RESPONSE) ||
+        (object_handle == UX_PICTBRIDGE_OBJECT_HANDLE_CLIENT_REQUEST)) {
+
+        /* Check what XML object is requested. It is either a request script or a response. */
+        if (object_handle == UX_PICTBRIDGE_OBJECT_HANDLE_HOST_RESPONSE)
+            object_info = (UX_SLAVE_CLASS_PIMA_OBJECT *) pictbridge -&gt; ux_pictbridge_object_host;
+        else
+            object_info = (UX_SLAVE_CLASS_PIMA_OBJECT *) pictbridge -&gt;
+                ux_pictbridge_object_client;
+    } else
+        /* Get the object info from the job info structure. */
+        object_info = (UX_SLAVE_CLASS_PIMA_OBJECT *) pictbridge -&gt;
+            ux_pictbridge_jobinfo.ux_pictbridge_jobinfo_object;
+    /* Return the pointer to this object. */
+    *object = object_info;
+
+    /* We are done. */
+    return(UX_SUCCESS);
+}</code></pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_ux_device_class_pima_object_data_get">ux_device_class_pima_object_data_get</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Return the object data</p>
+</div>
+<div class="sect2">
+<h3 id="_prototype_5">Prototype</h3>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-C" data-lang="C">UINT ux_device_class_pima_object_info_get(
+    UX_SLAVE_CLASS_PIMA *pima,
+    ULONG object_handle,
+    UCHAR *object_buffer,
+    ULONG object_offset,
+    ULONG object_length_requested,
+    ULONG *object_actual_length);</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_description_5">Description</h3>
+<div class="paragraph">
+<p>This function is called when the PIMA class needs to retrieve the object data in the local system and send it back to the host.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_parameters_5">Parameters</h3>
+<div class="ulist">
+<ul>
+<li>
+<p><strong>pima</strong>: Pointer to the pima class instance.</p>
+</li>
+<li>
+<p><strong>object_handle</strong>: Handle of the object</p>
+</li>
+<li>
+<p><strong>object_buffer</strong>: Object buffer address</p>
+</li>
+<li>
+<p><strong>object_length_requested</strong>: Object data length requested by the client to the application</p>
+</li>
+<li>
+<p><strong>object_actual_length</strong>: Object data length returned by the application</p>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_example_5">Example</h3>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-C" data-lang="C">UINT ux_pictbridge_dpsclient_object_data_get(UX_SLAVE_CLASS_PIMA *pima,
+    ULONG object_handle, UCHAR *object_buffer, ULONG object_offset,
+    ULONG object_length_requested, ULONG *object_actual_length)
+{
+
+    UX_PICTBRIDGE *pictbridge;
+    UX_SLAVE_CLASS_PIMA_OBJECT *object_info;
+    UCHAR *pima_object_buffer;
+    ULONG actual_length;
+    UINT status;
+
+    /* Get the pointer to the Pictbridge instance. */
+    pictbridge = (UX_PICTBRIDGE *)pima -&gt; ux_device_class_pima_application;
+
+    /* Check the object handle. If this is handle 1 or 2 , we need to return the XML script object.
+       If the handle is not 1 or 2, this is a JPEG picture or other object to be printed. */
+    if ((object_handle == UX_PICTBRIDGE_OBJECT_HANDLE_HOST_RESPONSE) ||
+        (object_handle == UX_PICTBRIDGE_OBJECT_HANDLE_CLIENT_REQUEST))
+    {
+        /* Check what XML object is requested. It is either a request script or a response. */
+        if (object_handle == UX_PICTBRIDGE_OBJECT_HANDLE_HOST_RESPONSE)
+            object_info = (UX_SLAVE_CLASS_PIMA_OBJECT *) pictbridge -&gt;
+                ux_pictbridge_object_host;
+        else
+            object_info = (UX_SLAVE_CLASS_PIMA_OBJECT *) pictbridge -&gt;
+                ux_pictbridge_object_client;
+
+       /* Is this the correct handle ? */
+       if (object_info -&gt; ux_device_class_pima_object_handle_id == object_handle)
+       {
+           /* Get the pointer to the object buffer. */
+           pima_object_buffer = object_info -&gt; ux_device_class_pima_object_buffer;
+
+           /* Copy the demanded object data portion. */
+           ux_utility_memory_copy(object_buffer, pima_object_buffer +
+               object_offset, object_length_requested);
+
+           /* Update the length requested. for a demo, we do not do any checking. */
+           *object_actual_length = object_length_requested;
+
+           /* What cycle are we in ? */
+           if (pictbridge -&gt; ux_pictbridge_host_client_state_machine &amp;
+               UX_PICTBRIDGE_STATE_MACHINE_HOST_REQUEST)
+            {
+                /* Check if we are blocking for a client request. */
+                if (pictbridge -&gt; ux_pictbridge_host_client_state_machine &amp;
+                    UX_PICTBRIDGE_STATE_MACHINE_CLIENT_REQUEST_PENDING)
+
+                    /* Yes we are pending, send an event to release the pending request. */
+                    ux_utility_event_flags_set(&amp;pictbridge -&gt;
+                        ux_pictbridge_event_flags_group,
+                        UX_PICTBRIDGE_EVENT_FLAG_STATE_MACHINE_READY, TX_OR);
+
+               /* Since we are in host request, this indicates we are done with the cycle. */
+               pictbridge -&gt; ux_pictbridge_host_client_state_machine =
+                   UX_PICTBRIDGE_STATE_MACHINE_IDLE;
+
+            }
+
+            /* We have copied the requested data. Return OK. */
+            return(UX_SUCCESS);
+
+        }
+    }
+    else
+    {
+
+        /* Get the object info from the job info structure. */
+        object_info = (UX_SLAVE_CLASS_PIMA_OBJECT *) pictbridge -&gt;
+            ux_pictbridge_jobinfo.ux_pictbridge_jobinfo_object;
+
+        /* Obtain the data from the application jobinfo callback. */
+        status = pictbridge -&gt; ux_pictbridge_jobinfo.
+            ux_pictbridge_jobinfo_object_data_read(pictbridge, object_buffer, object_offset,
+            object_length_requested, &amp;actual_length);
+
+        /* Save the length returned. */
+        *object_actual_length = actual_length;
+
+        /* Return the application status. */
+        return(status);
+
+    }
+
+    /* Could not find the handle. */
+
+    return(UX_DEVICE_CLASS_PIMA_RC_INVALID_OBJECT_HANDLE);
+}</code></pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_ux_device_class_pima_object_info_send">ux_device_class_pima_object_info_send</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Host sends the object information</p>
+</div>
+<div class="sect2">
+<h3 id="_prototype_6">Prototype</h3>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-C" data-lang="C">UINT ux_device_class_pima_object_info_send(
+    UX_SLAVE_CLASS_PIMA *pima,
+    UX_SLAVE_CLASS_PIMA_OBJECT *object,
+    ULONG *object_handle);</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_description_6">Description</h3>
+<div class="paragraph">
+<p>This function is called when the PIMA class needs to receive the object information in the local system for future storage.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_parameters_6">Parameters</h3>
+<div class="ulist">
+<ul>
+<li>
+<p><strong>pima</strong>: Pointer to the pima class instance</p>
+</li>
+<li>
+<p><strong>object</strong>:  Pointer to the object</p>
+</li>
+<li>
+<p><strong>object_handle</strong>: Handle of the object</p>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_example_6">Example</h3>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-C" data-lang="C">UINT ux_pictbridge_dpsclient_object_info_send(UX_SLAVE_CLASS_PIMA *pima,
+    UX_SLAVE_CLASS_PIMA_OBJECT *object, ULONG *object_handle)
+{
+    UX_PICTBRIDGE *pictbridge;
+    UX_SLAVE_CLASS_PIMA_OBJECT *object_info; UCHAR
+    string_discovery_name[UX_PICTBRIDGE_MAX_FILE_NAME_SIZE];
+
+    /* Get the pointer to the Pictbridge instance. */
+    pictbridge = (UX_PICTBRIDGE *)pima -&gt; ux_device_class_pima_application;
+
+    /* We only have one object. */
+    object_info = (UX_SLAVE_CLASS_PIMA_OBJECT *) pictbridge -&gt;
+        ux_pictbridge_object_host;
+
+    /* Copy the demanded object info set. */
+    ux_utility_memory_copy(object_info, object,
+        UX_SLAVE_CLASS_PIMA_OBJECT_DATA_LENGTH);
+
+    /* Store the object handle. In Pictbridge we only receive XML scripts so the handle is hardwired to 1. */
+    object_info -&gt; ux_device_class_pima_object_handle_id = 1;
+    *object_handle = 1;
+
+    /* Check state machine. If we are in discovery pending mode, check file name of this object. */
+    if (pictbridge -&gt; ux_pictbridge_discovery_state ==
+        UX_PICTBRIDGE_DPSCLIENT_DISCOVERY_PENDING)
+    {
+        /* We are in the discovery mode. Check for file name. It must match
+           HDISCVRY.DPS in Unicode mode. */
+
+        /* Check if this is a script. */
+        if (object_info -&gt; ux_device_class_pima_object_format ==
+            UX_DEVICE_CLASS_PIMA_OFC_SCRIPT)
+        {
+
+            /* Yes this is a script. We need to search for the HDISCVRY.DPS file name. Get the file name in a ascii format. */
+            ux_utility_unicode_to_string(object_info -&gt;
+                ux_device_class_pima_object_filename,
+                string_discovery_name);
+
+            /* Now, compare it to the HDISCVRY.DPS file name. Check length first. */
+            if (ux_utility_string_length_get(_ux_pictbridge_hdiscovery_name)
+                == ux_utility_string_length_get(string_discovery_name))
+            {
+
+                /* So far, the length of name of the files are the same. Compare names now. */
+                if(ux_utility_memory_compare(_ux_pictbridge_hdiscovery_name,
+                    string_discovery_name,
+                    ux_utility_string_length_get(string_discovery_name)) == UX_SUCCESS)
+                {
+                    /* We are done with discovery of the printer. We can now send notifications when the camera wants to print an object. */
+                    pictbridge -&gt; ux_pictbridge_discovery_state =
+                        UX_PICTBRIDGE_DPSCLIENT_DISCOVERY_COMPLETE;
+
+                    /* Set an event flag if the application is listening. */
+                    ux_utility_event_flags_set(&amp;pictbridge -&gt;
+                        ux_pictbridge_event_flags_group,
+                        UX_PICTBRIDGE_EVENT_FLAG_DISCOVERY, TX_OR);
+
+                    /* There is no object during th discovery cycle. */
+                    return(UX_SUCCESS);
+                }
+            }
+        }
+    }
+    /* What cycle are we in ? */
+    if (pictbridge -&gt; ux_pictbridge_host_client_state_machine ==
+        UX_PICTBRIDGE_STATE_MACHINE_IDLE)
+
+        /* Since we are in idle state, we must have received a request from the host. */
+        pictbridge -&gt; ux_pictbridge_host_client_state_machine =
+            UX_PICTBRIDGE_STATE_MACHINE_HOST_REQUEST;
+
+    /* We have copied the requested data. Return OK. */
+    return(UX_SUCCESS);
+}</code></pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_ux_device_class_pima_object_data_send">ux_device_class_pima_object_data_send</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Host sends the object data</p>
+</div>
+<div class="sect2">
+<h3 id="_prototype_7">Prototype</h3>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-C" data-lang="C">UINT ux_device_class_pima_object_data_send(
+    UX_SLAVE_CLASS_PIMA *pima,
+    ULONG object_handle,
+    ULONG phase,
+    UCHAR *object_buffer,
+    ULONG object_offset,
+    ULONG object_length);</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_description_7">Description</h3>
+<div class="paragraph">
+<p>This function is called when the PIMA class needs to receive the object data in the local system for storage.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_parameters_7">Parameters</h3>
+<div class="ulist">
+<ul>
+<li>
+<p><strong>pima</strong>: Pointer to the pima class instance</p>
+</li>
+<li>
+<p><strong>object_handle</strong>: Handle of the object</p>
+</li>
+<li>
+<p><strong>phase</strong>: phase of the transfer (active or complete)</p>
+</li>
+<li>
+<p><strong>object_buffer</strong>: Object buffer address</p>
+</li>
+<li>
+<p><strong>object_offset</strong>: Address of data</p>
+</li>
+<li>
+<p><strong>object_length</strong>: Object data length sent by application</p>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_example_7">Example</h3>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-C" data-lang="C">UINT ux_pictbridge_dpsclient_object_data_send(UX_SLAVE_CLASS_PIMA *pima,
+    ULONG object_handle,
+    ULONG phase,
+    UCHAR *object_buffer,
+    ULONG object_offset,
+    ULONG object_length)
+{
+    UINT status;
+    UX_PICTBRIDGE *pictbridge;
+    UX_SLAVE_CLASS_PIMA_OBJECT *object_info;
+    ULONG event_flag;
+    UCHAR *pima_object_buffer;
+
+    /* Get the pointer to the Pictbridge instance. */
+    pictbridge = (UX_PICTBRIDGE *)pima -&gt; ux_device_class_pima_application;
+
+    /* Get the pointer to the pima object. */
+    object_info = (UX_SLAVE_CLASS_PIMA_OBJECT *) pictbridge -&gt;
+        ux_pictbridge_object_host;
+
+    /* Is this the correct handle ? */
+    if (object_info -&gt; ux_device_class_pima_object_handle_id == object_handle)
+    {
+        /* Get the pointer to the object buffer. */
+        pima_object_buffer = object_info -&gt;
+            ux_device_class_pima_object_buffer;
+
+        /* Check the phase. We should wait for the object to be completed and the response sent back before parsing the object. */
+        if (phase == UX_DEVICE_CLASS_PIMA_OBJECT_TRANSFER_PHASE_ACTIVE)
+        {
+            /* Copy the demanded object data portion. */
+            ux_utility_memory_copy(pima_object_buffer + object_offset,
+                object_buffer, object_length);
+
+            /* Save the length of this object. */
+            object_info -&gt; ux_device_class_pima_object_length = object_length;
+
+            /* We are not done yet. */
+            return(UX_SUCCESS);
+        }
+        else
+        {
+            /* Completion of transfer. We are done. */
+            return(UX_SUCCESS);
+        }
+    }
+}</code></pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_ux_device_class_pima_object_delete">ux_device_class_pima_object_delete</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Delete a local object</p>
+</div>
+<div class="sect2">
+<h3 id="_prototype_8">Prototype</h3>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-C" data-lang="C">UINT ux_device_class_pima_object_delete(
+    UX_SLAVE_CLASS_PIMA *pima,
+    ULONG object_handle);</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_description_8">Description</h3>
+<div class="paragraph">
+<p>This function is called when the PIMA class needs to delete an object on the local storage.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_parameters_8">Parameters</h3>
+<div class="ulist">
+<ul>
+<li>
+<p><strong>pima</strong>: Pointer to the pima class instance</p>
+</li>
+<li>
+<p><strong>object_handle</strong>: Handle of the object</p>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_example_8">Example</h3>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-C" data-lang="C">UINT ux_pictbridge_dpsclient_object_delete(UX_SLAVE_CLASS_PIMA *pima,
+    ULONG object_handle)
+{
+    /* Delete the object pointer by the handle. */
+
+}</code></pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_usb_device_audio_class">USB Device Audio Class</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>The USB device Audio class allows for a USB host system to communicate with the device as an audio device. This class is based on the USB standard and USB Audio Class 1.0 or 2.0 standard.</p>
+</div>
+<div class="paragraph">
+<p>A USB audio compliant device framework needs to be declared by the device stack. An example of an Audio 2.0 speaker follows:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-C" data-lang="C">unsigned char device_framework_high_speed[] = {
+
+    /* --- Device Descriptor 18 bytes
+    0x00 bDeviceClass: Refer to interface
+    0x00 bDeviceSubclass: Refer to interface
+    0x00 bDeviceProtocol: Refer to interface
+
+    idVendor &amp; idProduct - https://www.linux-usb.org/usb.ids
+    */
+
+    /* 0 bLength, bDescriptorType */ 18, 0x01,
+    /* 2 bcdUSB : 0x200 (2.00) */ 0x00, 0x02,
+    /* 4 bDeviceClass : 0x00 (see interface) */ 0x00,
+    /* 5 bDeviceSubClass : 0x00 (see interface) */ 0x00,
+    /* 6 bDeviceProtocol : 0x00 (see interface) */ 0x00,
+    /* 7 bMaxPacketSize0 */ 0x08,
+    /* 8 idVendor, idProduct */ 0x84, 0x84, 0x03, 0x00,
+    /* 12 bcdDevice */ 0x00, 0x02,
+    /* 14 iManufacturer, iProduct, iSerialNumber */ 0, 0, 0,
+    /* 17 bNumConfigurations */ 1,
+    /* ---------------- Device Qualifier Descriptor */
+    /* 0 bLength, bDescriptorType */ 10, 0x06,
+    /* 2 bcdUSB : 0x200 (2.00) */ 0x00,0x02,
+    /* 4 bDeviceClass : 0x00 (see interface) */ 0x00,
+    /* 5 bDeviceSubClass : 0x00 (see interface) */ 0x00,
+    /* 6 bDeviceProtocol : 0x00 (see interface) */ 0x00,
+    /* 7 bMaxPacketSize0 */ 8,
+    /* 8 bNumConfigurations */ 1,
+    /* 9 bReserved */ 0,
+    /* --- Configuration Descriptor (9+8+73+55=145, 0x91) */
+    /* 0 bLength, bDescriptorType */ 9, 0x02,
+    /* 2 wTotalLength */ 145, 0,
+    /* 4 bNumInterfaces, bConfigurationValue */ 2, 1,
+    /* 6 iConfiguration */ 0,
+    /* 7 bmAttributes, bMaxPower */ 0x80, 50,
+    /* ----------- Interface Association Descriptor */
+    /* 0 bLength, bDescriptorType */ 8, 0x0B,
+    /* 2 bFirstInterface, bInterfaceCount */ 0, 2,
+    /* 4 bFunctionClass : 0x01 (Audio) */ 0x01,
+    /* 5 bFunctionSubClass : 0x00 (UNDEFINED) */ 0x00,
+    /* 6 bFunctionProtocol : 0x20 (VERSION_02_00) */ 0x20,
+    /* 7 iFunction */ 0,
+    /* --- Interface Descriptor #0: Control (9+64=73) */
+    /* 0 bLength, bDescriptorType */ 9, 0x04,
+    /* 2 bInterfaceNumber, bAlternateSetting */ 0, 0,
+    /* 4 bNumEndpoints */ 0,
+    /* 5 bInterfaceClass : 0x01 (Audio) */ 0x01,
+    /* 6 bInterfaceSubClass : 0x01 (AudioControl) */ 0x01,
+    /* 7 bInterfaceProtocol : 0x20 (VERSION_02_00) */ 0x20,
+    /* 8 iInterface */ 0,
+    /* --- Audio 2.0 AC Interface Header Descriptor (9+8+17+18+12=64, 0x40) */
+    /* 0 bLength */ 9,
+    /* 1 bDescriptorType, bDescriptorSubtype */ 0x24, 0x01,
+    /* 3 bcdADC */ 0x00, 0x02,
+    /* 5 bCategory : 0x08 (IO Box) */ 0x08,
+    /* 6 wTotalLength */ 64, 0,
+    /* 8 bmControls */ 0x00,
+    /* -------- Audio 2.0 AC Clock Source Descriptor */
+    /* 0 bLength */ 8,
+    /* 1 bDescriptorType, bDescriptorSubtype */ 0x24, 0x0A,
+    /* 3 bClockID */ 0x10,
+    /* 4 bmAttributes : 0x05 (Sync|InternalFixedClk) */ 0x05,
+    /* 5 bmControls : 0x01 (FreqReadOnly) */ 0x01,
+    /* 6 bAssocTerminal, iClockSource */ 0x00, 0,
+    /* ------ Audio 2.0 AC Input Terminal Descriptor */
+    /* 0 bLength */ 17,
+    /* 1 bDescriptorType, bDescriptorSubtype */ 0x24, 0x02, /* 3 bTerminalID */ 0x04,
+    /* 4 wTerminalType : 0x0101 (USB Streaming) */ 0x01, 0x01,
+    /* 6 bAssocTerminal, bCSourceID */ 0x00, 0x10,
+    /* 8 bNrChannels */ 2,
+    /* 9 bmChannelConfig */ 0x00, 0x00, 0x00, 0x00,
+    /* 13 iChannelNames, bmControls, iTerminal */ 0, 0x00, 0x00, 0,
+    /* -------- Audio 2.0 AC Feature Unit Descriptor */
+    /* 0 bLength */ 18,
+    /* 1 bDescriptorType, bDescriptorSubtype */ 0x24, 0x06,
+    /* 3 bUnitID, bSourceID */ 0x05, 0x04,
+    /* 5 bmaControls(0) : 0x0F (VolumeRW|MuteRW) */ 0x0F, 0x00, 0x00, 0x00,
+    /* 9 bmaControls(1) : 0x00000000 */ 0x00, 0x00, 0x00, 0x00,
+    /* 13 bmaControls(1) : 0x00000000 */ 0x00, 0x00, 0x00, 0x00,
+    /* . iFeature */ 0,
+    /* ----- Audio 2.0 AC Output Terminal Descriptor */
+    /* 0 bLength */ 12,
+    /* 1 bDescriptorType, bDescriptorSubtype */ 0x24, 0x03, /* 3 bTerminalID */ 0x06,
+    /* 4 wTerminalType : 0x0301 (Speaker) */ 0x01, 0x03,
+    /* 6 bAssocTerminal, bSourceID, bCSourceID */ 0x00, 0x05, 0x10,
+    /* 9 bmControls, iTerminal */ 0x00, 0x00, 0,
+    /* --- Interface Descriptor #1: Stream OUT (9+9+16+6+7+8=55) */
+    /* 0 bLength, bDescriptorType */ 9, 0x04,
+    /* 2 bInterfaceNumber, bAlternateSetting */ 1, 0,
+    /* 4 bNumEndpoints */ 0,
+    /* 5 bInterfaceClass : 0x01 (Audio) */ 0x01,
+    /* 6 bInterfaceSubClass : 0x01 (AudioStream) */ 0x02,
+    /* 7 bInterfaceProtocol : 0x20 (VERSION_02_00) */ 0x20,
+    /* 8 iInterface */ 0,
+    /* ----------------------- Interface Descriptor */
+    /* 0 bLength, bDescriptorType */ 9, 0x04,
+    /* 2 bInterfaceNumber, bAlternateSetting */ 1, 1,
+    /* 4 bNumEndpoints */ 1,
+    /* 5 bInterfaceClass : 0x01 (Audio) */ 0x01,
+    /* 6 bInterfaceSubClass : 0x01 (AudioStream) */ 0x02,
+    /* 7 bInterfaceProtocol : 0x20 (VERSION_02_00) */ 0x20,
+    /* 8 iInterface */ 0,
+    /* ----------- Audio 2.0 AS Interface Descriptor */
+    /* 0 bLength */ 16,
+    /* 1 bDescriptorType, bDescriptorSubtype */ 0x24, 0x01,
+    /* 3 bTerminalLink, bmControls */ 0x04, 0x00,
+    /* 5 bFormatType : 0x01 (FORMAT_TYPE_I) */ 0x01,
+    /* 6 bmFormats : 0x000000001 (PCM) */ 0x01, 0x00, 0x00, 0x00, /* 10 bNrChannels */ 2,
+    /* 11 bmChannelConfig */ 0x00, 0x00, 0x00, 0x00,
+    /* 15 iChannelNames */ 0, /* --------- Audio 2.0 AS Format Type Descriptor */
+    /* 0 bLength */ 6,
+    /* 1 bDescriptorType, bDescriptorSubtype */ 0x24, 0x02,
+    /* 3 bFormatType : 0x01 (FORMAT_TYPE_I) */ 0x01,
+    /* 4 bSubslotSize, bBitResolution */ 2, 16,
+    /* ------------------------- Endpoint Descriptor */
+    /* 0 bLength, bDescriptorType */ 7, 0x05,
+    /* 2 bEndpointAddress */ 0x02,
+    /* 3 bmAttributes : 0x0D (Sync|ISO) */ 0x0D,
+    /* 4 wMaxPacketSize : 0x0100 (256) */ 0x00, 0x01,
+    /* 6 bInterval : 0x04 (1ms) */ 4,
+    /* - Audio 2.0 AS ISO Audio Data Endpoint Descriptor */
+    /* 0 bLength */ 8,
+    /* 1 bDescriptorType, bDescriptorSubtype */ 0x25, 0x01,
+    /* 3 bmAttributes, bmControls */ 0x00, 0x00,
+    /* 5 bLockDelayUnits, wLockDelay */ 0x00, 0x00, 0x00,
+};</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>The Audio class uses a composite device framework to group interfaces (control and streaming). As a result care should be taken when defining the device descriptor. USBX relies on the IAD descriptor to know internally how to bind interfaces. The IAD descriptor should be declared before the interfaces (an AudioControl interface followed by one or more AudioStreaming interfaces) and contain the first interface of the Audio class (the AudioControl interface) and how many interfaces are attached.</p>
+</div>
+<div class="paragraph">
+<p>The way the audio class works depends on whether the device is sending or receiving audio, but both cases use a FIFO for storing audio frame buffers: if the device is sending audio to the host, then the application adds audio frame buffers to the FIFO which are later sent to the host by USBX; if the device is receiving audio from the host, then USBX adds the audio frame buffers received from the host to the FIFO which are later read by the application. Each audio stream has its own FIFO, and each audio frame buffer consists of multiple samples.</p>
+</div>
+<div class="paragraph">
+<p>The initialization of the Audio class expects the following parts.</p>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>Audio class expects the following streaming parameters:</p>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-C" data-lang="C">/* Set the parameters for Audio streams. */
+/* Set the application-defined callback that is invoked when the
+   host requests a change to the alternate setting. */
+audio_stream_parameter[0].ux_device_class_audio_stream_parameter_callbacks
+    .ux_device_class_audio_stream_change = demo_audio_read_change;
+
+/* Set the application-defined callback that is invoked whenever
+   a USB packet (audio frame) is sent to or received from the host. */
+audio_stream_parameter[0].ux_device_class_audio_stream_parameter_callbacks
+    .ux_device_class_audio_stream_frame_done = demo_audio_read_done;
+
+/* Set the number of audio frame buffers in the FIFO. */
+audio_stream_parameter[0].ux_device_class_audio_stream_parameter_max_frame _buffer_nb = UX_DEMO_FRAME_BUFFER_NB;
+
+/* Set the maximum size of each audio frame buffer in the FIFO. */
+audio_stream_parameter[0].ux_device_class_audio_stream_parameter_max_frame _buffer_size = UX_DEMO_MAX_FRAME_SIZE;
+
+/* Set the internally-defined audio processing thread entry pointer. If the application wishes to receive audio from the host
+   (which is the case in this example), ux_device_class_audio_read_thread_entry should be used;
+   if the application wishes to send data to the host, ux_device_class_audio_write_thread_entry should be used. */
+audio_stream_parameter[0].ux_device_class_audio_stream_parameter_thread_entry = ux_device_class_audio_read_thread_entry;</code></pre>
+</div>
+</div>
+</li>
+<li>
+<p>Audio class expects the following function parameters.</p>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-C" data-lang="C">/* Set the parameters for Audio device. */
+
+/* Set the number of streams. */
+audio_parameter.ux_device_class_audio_parameter_streams_nb = 1;
+
+/* Set the pointer to the first audio stream parameter.
+   Note that we initialized this parameter in the previous section.
+   Also note that for more than one streams, this should be an array. */
+audio_parameter.ux_device_class_audio_parameter_streams = audio_stream_parameter;
+
+/* Set the application-defined callback that is invoked when the audio class
+   is activated i.e. device is connected to host. */
+audio_parameter.ux_device_class_audio_parameter_callbacks
+    .ux_slave_class_audio_instance_activate = demo_audio_instance_activate;
+
+/* Set the application-defined callback that is invoked when the audio class
+   is deactivated i.e. device is disconnected from host. */
+
+audio_parameter.ux_device_class_audio_parameter_callbacks
+    .ux_slave_class_audio_instance_deactivate = demo_audio_instance_deactivate;
+
+/* Set the application-defined callback that is invoked when the stack receives a control request from the host.
+   See below for more details.
+*/
+audio_parameter.ux_device_class_audio_parameter_callbacks
+    .ux_device_class_audio_control_process = demo_audio20_request_process;
+
+/* Initialize the device Audio class. This class owns interfaces starting with 0. */
+status = ux_device_stack_class_register(_ux_system_slave_class_audio_name,
+    ux_device_class_audio_entry, 1, 0, &amp;audio_parameter);
+if(status!=UX_SUCCESS)
+    return;</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>The application-defined control request callback (<strong><em>ux_device_class_audio_control_process</em></strong>; set in the previous example) is invoked when the stack receives a control request from the host. If the request is accepted and handled (acknowledged or stalled) the callback must return success, otherwise error should be returned.</p>
+</div>
+<div class="paragraph">
+<p>The class-specific control request process is defined as an application-defined callback because the control requests are very different between USB Audio versions and a large part of the request process relates to the device framework. The application should handle requests correctly to make the device functional.</p>
+</div>
+<div class="paragraph">
+<p>Since for an audio device, volume, mute and sampling frequency are common control requests, simple, internally-defined callbacks for different USB audio versions are introduced in later sections for applications to use. Refer to <strong><em>ux_device_class_audio10_control_process</em></strong> and <strong><em>ux_device_class_audio_control_request</em></strong> for more details.</p>
+</div>
+</li>
+</ol>
+</div>
+<div class="paragraph">
+<p>In the device framework of the Audio device, the PID/VID are stored in the device descriptor (see the device descriptor declared above).</p>
+</div>
+<div class="paragraph">
+<p>When a USB host system discovers the USB Audio device and mounts the audio class, the device can be used with any audio player or recorder (depending on the framework). See the host Operating System for reference.</p>
+</div>
+<div class="paragraph">
+<p>The Audio class APIs are defined below.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_ux_device_class_audio_read_thread_entry">ux_device_class_audio_read_thread_entry</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Thread entry for reading data for the Audio function.</p>
+</div>
+<div class="sect2">
+<h3 id="_prototype_9">Prototype</h3>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-C" data-lang="C">VOID ux_device_class_audio_read_thread_entry(ULONG audio_stream);</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_description_9">Description</h3>
+<div class="paragraph">
+<p>This function is passed to the audio stream initialization parameter if reading audio from the host is desired. Internally, a thread is created with this function as its entry function; the thread itself reads audio data through the isochronous OUT endpoint in the Audio function.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_parameters_9">Parameters</h3>
+<div class="ulist">
+<ul>
+<li>
+<p><strong>audio_stream</strong>: Pointer to the audio stream instance.</p>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_example_9">Example</h3>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-C" data-lang="C">/* Set parameter to initialize a stream for reading. */
+audio_stream_parameter[0].ux_device_class_audio_stream_parameter_thread_entry
+     = ux_device_class_audio_read_thread_entry;</code></pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_ux_device_class_audio_write_thread_entry">ux_device_class_audio_write_thread_entry</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Thread entry for writing data for the Audio function</p>
+</div>
+<div class="sect2">
+<h3 id="_prototype_10">Prototype</h3>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-C" data-lang="C">VOID ux_device_class_audio_write_thread_entry(ULONG audio_stream);</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_description_10">Description</h3>
+<div class="paragraph">
+<p>This function is passed to the audio stream initialization parameter if writing audio to the host is desired. Internally, a thread is created with this function as its entry function; the thread itself writes audio data through the isochronous IN endpoint in the Audio function.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_parameters_10">Parameters</h3>
+<div class="ulist">
+<ul>
+<li>
+<p><strong>audio_stream</strong>: Pointer to the audio stream instance.</p>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_example_10">Example</h3>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-C" data-lang="C">/* Set parameter to initialize as stream for writing. */
+audio_stream_parameter[0].ux_device_class_audio_stream_parameter_thread_en
+    try = ux_device_class_audio_write_thread_entry;</code></pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_ux_device_class_audio_stream_get">ux_device_class_audio_stream_get</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Get specific stream instance for the Audio function</p>
+</div>
+<div class="sect2">
+<h3 id="_prototype_11">Prototype</h3>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-C" data-lang="C">UINT ux_device_class_audio_stream_get(
+    UX_DEVICE_CLASS_AUDIO *audio,
+    ULONG stream_index,
+    UX_DEVICE_CLASS_AUDIO_STREAM **stream);</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_description_11">Description</h3>
+<div class="paragraph">
+<p>This function is used to get a stream instance of audio class.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_parameters_11">Parameters</h3>
+<div class="ulist">
+<ul>
+<li>
+<p><strong>audio</strong>: Pointer to the audio instance</p>
+</li>
+<li>
+<p><strong>stream_index</strong>: Stream instance index based on 0</p>
+</li>
+<li>
+<p><strong>stream</strong>: Pointer to buffer to store the audio stream instance pointer</p>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_return_value">Return Value</h3>
+<div class="ulist">
+<ul>
+<li>
+<p><strong>UX_SUCCESS</strong> (0x00) This operation was successful</p>
+</li>
+<li>
+<p><strong>UX_ERROR</strong> (0xFF) Error from function</p>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_example_11">Example</h3>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-C" data-lang="C">/* Get audio stream instance. */
+status = ux_device_class_audio_stream_get(audio, 0, &amp;stream);
+
+if(status != UX_SUCCESS)
+    return;</code></pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_ux_device_class_audio_reception_start">ux_device_class_audio_reception_start</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Start audio data reception for the Audio stream</p>
+</div>
+<div class="sect2">
+<h3 id="_prototype_12">Prototype</h3>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-C" data-lang="C">UINT ux_device_class_audio_reception_start(UX_DEVICE_CLASS_AUDIO_STREAM *stream);</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_description_12">Description</h3>
+<div class="paragraph">
+<p>This function is used to start audio data reading in audio streams.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_parameters_12">Parameters</h3>
+<div class="ulist">
+<ul>
+<li>
+<p><strong>stream</strong>: Pointer to the audio stream instance.</p>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_return_value_2">Return Value</h3>
+<div class="ulist">
+<ul>
+<li>
+<p><strong>UX_SUCCESS</strong> (0x00) This operation was successful.</p>
+</li>
+<li>
+<p><strong>UX_CONFIGURATION_HANDLE_UNKNOWN</strong> (0x51) The interface is down.</p>
+</li>
+<li>
+<p><strong>UX_BUFFER_OVERFLOW</strong> (0x5d) FIFO buffer is full.</p>
+</li>
+<li>
+<p><strong>UX_ERROR</strong> (0xFF) Error from function</p>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_example_12">Example</h3>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-C" data-lang="C">/* Start stream data reception. */
+status = ux_device_class_audio_reception_start(stream);
+
+if(status != UX_SUCCESS)
+    return;</code></pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_ux_device_class_audio_sample_read8">ux_device_class_audio_sample_read8</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Read 8-bit sample from the Audio stream</p>
+</div>
+<div class="sect2">
+<h3 id="_prototype_13">Prototype</h3>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-C" data-lang="C">UINT ux_device_class_audio_sample_read8(
+    UX_DEVICE_CLASS_AUDIO_STREAM *stream,
+    UCHAR *buffer);</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_description_13">Description</h3>
+<div class="paragraph">
+<p>This function reads 8-bit audio sample data from the specified stream.</p>
+</div>
+<div class="paragraph">
+<p>Specifically, it reads the sample data from the current audio frame buffer in the FIFO. Upon reading the last sample in an audio frame, the frame will be automatically freed so that it can be used to accept more data from the host.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_parameters_13">Parameters</h3>
+<div class="ulist">
+<ul>
+<li>
+<p><strong>stream</strong>: Pointer to the audio stream instance.</p>
+</li>
+<li>
+<p><strong>buffer</strong>: Pointer to the buffer to save sample byte.</p>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_return_value_3">Return Value</h3>
+<div class="ulist">
+<ul>
+<li>
+<p><strong>UX_SUCCESS</strong> (0x00) This operation was successful.</p>
+</li>
+<li>
+<p><strong>UX_CONFIGURATION_HANDLE_UNKNOWN</strong> (0x51) The interface is down.</p>
+</li>
+<li>
+<p><strong>UX_BUFFER_OVERFLOW</strong> (0x5d) FIFO buffer is null.</p>
+</li>
+<li>
+<p><strong>UX_ERROR</strong> (0xFF) Error from function</p>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_example_13">Example</h3>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-C" data-lang="C">/* Read a byte in audio FIFO. */
+
+status = ux_device_class_audio_sample_read8(stream, &amp;sample_byte);
+
+if(status != UX_SUCCESS)
+    return;</code></pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_ux_device_class_audio_sample_read16">ux_device_class_audio_sample_read16</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Read 16-bit sample from the Audio stream</p>
+</div>
+<div class="sect2">
+<h3 id="_prototype_14">Prototype</h3>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-C" data-lang="C">UINT ux_device_class_audio_sample_read16(
+    UX_DEVICE_CLASS_AUDIO_STREAM *stream,
+    USHORT *buffer);</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_description_14">Description</h3>
+<div class="paragraph">
+<p>This function reads 16-bit audio sample data from the specified stream.</p>
+</div>
+<div class="paragraph">
+<p>Specifically, it reads the sample data from the current audio frame buffer in the FIFO. Upon reading the last sample in an audio frame, the frame will be automatically freed so that it can be used to accept more data from the host.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_parameters_14">Parameters</h3>
+<div class="ulist">
+<ul>
+<li>
+<p><strong>stream</strong>: Pointer to the audio stream instance.</p>
+</li>
+<li>
+<p><strong>buffer</strong>: Pointer to the buffer to save the 16-bit sample.</p>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_return_value_4">Return Value</h3>
+<div class="ulist">
+<ul>
+<li>
+<p><strong>UX_SUCCESS</strong> (0x00) This operation was successful.</p>
+</li>
+<li>
+<p><strong>UX_CONFIGURATION_HANDLE_UNKNOWN</strong> (0x51) The interface is down.</p>
+</li>
+<li>
+<p><strong>UX_BUFFER_OVERFLOW</strong> (0x5d) FIFO buffer is null.</p>
+</li>
+<li>
+<p><strong>UX_ERROR</strong> (0xFF) Error from function</p>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_example_14">Example</h3>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-C" data-lang="C">/* Read a 16-bit sample in audio FIFO. */
+
+status = ux_device_class_audio_sample_read16(stream, &amp;sample_word);
+
+if(status != UX_SUCCESS)
+    return;</code></pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_ux_device_class_audio_sample_read24">ux_device_class_audio_sample_read24</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Read 24-bit sample from the Audio stream</p>
+</div>
+<div class="sect2">
+<h3 id="_prototype_15">Prototype</h3>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-C" data-lang="C">UINT ux_device_class_audio_sample_read24(
+    UX_DEVICE_CLASS_AUDIO_STREAM *stream,
+    ULONG *buffer);</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_description_15">Description</h3>
+<div class="paragraph">
+<p>This function reads 24-bit audio sample data from the specified stream.</p>
+</div>
+<div class="paragraph">
+<p>Specifically, it reads the sample data from the current audio frame buffer in the FIFO. Upon reading the last sample in an audio frame, the frame will be automatically freed so that it can be used to accept more data from the host.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_parameters_15">Parameters</h3>
+<div class="ulist">
+<ul>
+<li>
+<p><strong>stream</strong>: Pointer to the audio stream instance.</p>
+</li>
+<li>
+<p><strong>buffer</strong>: Pointer to the buffer to save the 3-byte sample.</p>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_return_value_5">Return Value</h3>
+<div class="ulist">
+<ul>
+<li>
+<p><strong>UX_SUCCESS</strong> (0x00) This operation was successful.</p>
+</li>
+<li>
+<p><strong>UX_CONFIGURATION_HANDLE_UNKNOWN</strong> (0x51) The interface is down.</p>
+</li>
+<li>
+<p><strong>UX_BUFFER_OVERFLOW</strong> (0x5d) FIFO buffer is null.</p>
+</li>
+<li>
+<p><strong>UX_ERROR</strong> (0xFF) Error from function</p>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_example_15">Example</h3>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-C" data-lang="C">/* Read 3 bytes to in audio FIFO. */
+
+status = ux_device_class_audio_sample_read24(stream, &amp;sample_bytes);
+
+if(status != UX_SUCCESS)
+    return;</code></pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_ux_device_class_audio_sample_read32">ux_device_class_audio_sample_read32</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Read 32-bit sample from the Audio stream</p>
+</div>
+<div class="sect2">
+<h3 id="_prototype_16">Prototype</h3>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-C" data-lang="C">UINT ux_device_class_audio_sample_read32(
+    UX_DEVICE_CLASS_AUDIO_STREAM *stream,
+    ULONG *buffer);</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_description_16">Description</h3>
+<div class="paragraph">
+<p>This function reads 32-bit audio sample data from the specified stream.</p>
+</div>
+<div class="paragraph">
+<p>Specifically, it reads the sample data from the current audio frame buffer in the FIFO. Upon reading the last sample in an audio frame, the frame will be automatically freed so that it can be used to accept more data from the host.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_parameters_16">Parameters</h3>
+<div class="ulist">
+<ul>
+<li>
+<p><strong>stream</strong>: Pointer to the audio stream instance.</p>
+</li>
+<li>
+<p><strong>buffer</strong>: Pointer to the buffer to save the 4-byte data.</p>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_return_value_6">Return Value</h3>
+<div class="ulist">
+<ul>
+<li>
+<p><strong>UX_SUCCESS</strong> (0x00) This operation was successful.</p>
+</li>
+<li>
+<p><strong>UX_CONFIGURATION_HANDLE_UNKNOWN</strong> (0x51) The interface is down.</p>
+</li>
+<li>
+<p><strong>UX_BUFFER_OVERFLOW</strong> (0x5d) FIFO buffer is null.</p>
+</li>
+<li>
+<p><strong>UX_ERROR</strong> (0xFF) Error from function</p>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_example_16">Example</h3>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-C" data-lang="C">/* Read 4 bytes in audio FIFO. */
+
+status = ux_device_class_audio_sample_read32(stream, &amp;sample_bytes);
+
+if(status != UX_SUCCESS)
+    return;</code></pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_ux_device_class_audio_read_frame_get">ux_device_class_audio_read_frame_get</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Get access to audio frame in the Audio stream</p>
+</div>
+<div class="sect2">
+<h3 id="_prototype_17">Prototype</h3>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-C" data-lang="C">UINT ux_device_class_audio_read_frame_get(
+    UX_DEVICE_CLASS_AUDIO_STREAM *stream,
+    UCHAR **frame_data,
+    ULONG *frame_length);</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_description_17">Description</h3>
+<div class="paragraph">
+<p>This function returns the first audio frame buffer and its length in the specified stream&#8217;s FIFO. When the application is done processing the data, ux_device_class_audio_read_frame_free must be used to free the frame buffer in the FIFO.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_parameters_17">Parameters</h3>
+<div class="ulist">
+<ul>
+<li>
+<p><strong>stream</strong>: Pointer to the audio stream instance.</p>
+</li>
+<li>
+<p><strong>frame_data</strong>: Pointer to data pointer to return the data pointer in.</p>
+</li>
+<li>
+<p><strong>frame_length</strong>: Pointer to buffer to save the frame length in number of bytes.</p>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_return_value_7">Return Value</h3>
+<div class="ulist">
+<ul>
+<li>
+<p><strong>UX_SUCCESS</strong> (0x00) This operation was successful.</p>
+</li>
+<li>
+<p><strong>UX_CONFIGURATION_HANDLE_UNKNOWN</strong> (0x51) The interface is down.</p>
+</li>
+<li>
+<p><strong>UX_BUFFER_OVERFLOW</strong> (0x5d) FIFO buffer is null.</p>
+</li>
+<li>
+<p><strong>UX_ERROR</strong> (0xFF) Error from function</p>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_example_17">Example</h3>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-C" data-lang="C">/* Get frame access. */
+
+status = ux_device_class_audio_read_frame_get(stream, &amp;frame, &amp;frame_length);
+
+if(status != UX_SUCCESS)
+    return;</code></pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_ux_device_class_audio_read_frame_free">ux_device_class_audio_read_frame_free</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Free an audio frame buffer in Audio stream</p>
+</div>
+<div class="sect2">
+<h3 id="_prototype_18">Prototype</h3>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-C" data-lang="C">UINT ux_device_class_audio_read_frame_free(UX_DEVICE_CLASS_AUDIO_STREAM *stream);</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_description_18">Description</h3>
+<div class="paragraph">
+<p>This function frees the audio frame buffer at the front of the specified stream&#8217;s FIFO so that it can receive data from the host.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_parameters_18">Parameters</h3>
+<div class="ulist">
+<ul>
+<li>
+<p><strong>stream</strong>: Pointer to the audio stream instance.</p>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_return_value_8">Return Value</h3>
+<div class="ulist">
+<ul>
+<li>
+<p><strong>UX_SUCCESS</strong> (0x00) This operation was successful.</p>
+</li>
+<li>
+<p><strong>UX_CONFIGURATION_HANDLE_UNKNOWN</strong> (0x51) The interface is down.</p>
+</li>
+<li>
+<p><strong>UX_BUFFER_OVERFLOW</strong> (0x5d) FIFO buffer is null.</p>
+</li>
+<li>
+<p><strong>UX_ERROR</strong> (0xFF) Error from function</p>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_example_18">Example</h3>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-C" data-lang="C">/* Refree a frame buffer in FIFO. */
+
+status = ux_device_class_audio_read_frame_free(stream);
+
+if(status != UX_SUCCESS)
+    return;</code></pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_ux_device_class_audio_transmission_start">ux_device_class_audio_transmission_start</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Start audio data transmission for the Audio stream</p>
+</div>
+<div class="sect2">
+<h3 id="_prototype_19">Prototype</h3>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-C" data-lang="C">UINT ux_device_class_audio_transmission_start(UX_DEVICE_CLASS_AUDIO_STREAM *stream);</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_description_19">Description</h3>
+<div class="paragraph">
+<p>This function is used to start sending audio data written to the FIFO in the audio class.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_parameters_19">Parameters</h3>
+<div class="ulist">
+<ul>
+<li>
+<p><strong>stream</strong>: Pointer to the audio stream instance.</p>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_return_value_9">Return Value</h3>
+<div class="ulist">
+<ul>
+<li>
+<p><strong>UX_SUCCESS</strong> (0x00) This operation was successful.</p>
+</li>
+<li>
+<p><strong>UX_CONFIGURATION_HANDLE_UNKNOWN</strong> (0x51) The interface is down.</p>
+</li>
+<li>
+<p><strong>UX_BUFFER_OVERFLOW</strong> (0x5d) FIFO buffer is null.</p>
+</li>
+<li>
+<p><strong>UX_ERROR</strong> (0xFF) Error from function</p>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_example_19">Example</h3>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-C" data-lang="C">/* Start stream data transmission. */
+
+status = ux_device_class_audio_transmission_start(stream);
+
+if(status != UX_SUCCESS)
+    return;</code></pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_ux_device_class_audio_frame_write">ux_device_class_audio_frame_write</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Write an audio frame into the Audio stream</p>
+</div>
+<div class="sect2">
+<h3 id="_prototype_20">Prototype</h3>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-C" data-lang="C">UINT ux_device_class_audio_frame_write(
+    UX_DEVICE_CLASS_AUDIO_STREAM *stream,
+    UCHAR *frame,
+    ULONG frame_length);</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_description_20">Description</h3>
+<div class="paragraph">
+<p>This function writes a frame to the audio stream&#8217;s FIFO. The frame data is copied to the available buffer in the FIFO so that it can be sent to the host.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_parameters_20">Parameters</h3>
+<div class="ulist">
+<ul>
+<li>
+<p><strong>stream</strong>: Pointer to the audio stream instance.</p>
+</li>
+<li>
+<p><strong>frame</strong>: Pointer to frame data.</p>
+</li>
+<li>
+<p><strong>frame_length</strong> Frame length in number of bytes.</p>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_return_value_10">Return Value</h3>
+<div class="ulist">
+<ul>
+<li>
+<p><strong>UX_SUCCESS</strong> (0x00) This operation was successful.</p>
+</li>
+<li>
+<p><strong>UX_CONFIGURATION_HANDLE_UNKNOWN</strong> (0x51) The interface is down.</p>
+</li>
+<li>
+<p><strong>UX_BUFFER_OVERFLOW</strong> (0x5d) FIFO buffer is full.</p>
+</li>
+<li>
+<p><strong>UX_ERROR</strong> (0xFF) Error from function</p>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_example_20">Example</h3>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-C" data-lang="C">/* Get frame access. */
+
+status = ux_device_class_audio_frame_write(stream, frame, frame_length);
+
+if(status != UX_SUCCESS)
+    return;</code></pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_ux_device_class_audio_write_frame_get">ux_device_class_audio_write_frame_get</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Get access to audio frame in the Audio stream</p>
+</div>
+<div class="sect2">
+<h3 id="_prototype_21">Prototype</h3>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-C" data-lang="C">UINT ux_device_class_audio_write_frame_get(
+    UX_DEVICE_CLASS_AUDIO_STREAM *stream,
+    UCHAR **frame_data,
+    ULONG *frame_length);</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_description_21">Description</h3>
+<div class="paragraph">
+<p>This function retrieves the address of the last audio frame buffer of the FIFO; it also retrieves the length of the audio frame buffer. After the application fills the audio frame buffer with its desired data, <strong><em>ux_device_class_audio_write_frame_commit</em></strong> must be used to add/commit the frame buffer to the FIFO.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_parameters_21">Parameters</h3>
+<div class="ulist">
+<ul>
+<li>
+<p><strong>stream</strong>: Pointer to the audio stream instance.</p>
+</li>
+<li>
+<p><strong>frame_data</strong>: Pointer to frame data pointer to return the frame data pointer in.</p>
+</li>
+<li>
+<p><strong>frame_length</strong> Pointer to the buffer to save frame length in number of bytes .</p>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_return_value_11">Return Value</h3>
+<div class="ulist">
+<ul>
+<li>
+<p><strong>UX_SUCCESS</strong> (0x00) This operation was successful.</p>
+</li>
+<li>
+<p><strong>UX_CONFIGURATION_HANDLE_UNKNOWN</strong> (0x51) The interface is down.</p>
+</li>
+<li>
+<p><strong>UX_BUFFER_OVERFLOW</strong> (0x5d) FIFO buffer is full.</p>
+</li>
+<li>
+<p><strong>UX_ERROR</strong> (0xFF) Error from function</p>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_example_21">Example</h3>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-C" data-lang="C">/* Get frame access. */
+
+status = ux_device_class_audio_write_frame_get(stream, &amp;frame, &amp;frame_length);
+
+if(status != UX_SUCCESS)
+     return;</code></pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_ux_device_class_audio_write_frame_commit">ux_device_class_audio_write_frame_commit</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Commit an audio frame buffer in Audio stream.</p>
+</div>
+<div class="sect2">
+<h3 id="_prototype_22">Prototype</h3>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-C" data-lang="C">UINT ux_device_class_audio_write_frame_commit(
+    UX_DEVICE_CLASS_AUDIO_STREAM *stream,
+    ULONG length);</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_description_22">Description</h3>
+<div class="paragraph">
+<p>This function adds/commits the last audio frame buffer to the FIFO so the buffer is ready to be transferred to host; note the last audio frame buffer should have been filled out via ux_device_class_write_frame_get.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_parameters_22">Parameters</h3>
+<div class="ulist">
+<ul>
+<li>
+<p><strong>stream</strong>: Pointer to the audio stream instance.</p>
+</li>
+<li>
+<p><strong>length</strong>: Number of bytes ready in the buffer.</p>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_return_value_12">Return Value</h3>
+<div class="ulist">
+<ul>
+<li>
+<p><strong>UX_SUCCESS</strong> (0x00) This operation was successful.</p>
+</li>
+<li>
+<p><strong>UX_CONFIGURATION_HANDLE_UNKNOWN</strong> (0x51) The interface is down.</p>
+</li>
+<li>
+<p><strong>UX_BUFFER_OVERFLOW</strong> (0x5d) FIFO buffer is fssull.</p>
+</li>
+<li>
+<p><strong>UX_ERROR</strong> (0xFF) Error from function</p>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_example_22">Example</h3>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-C" data-lang="C">/* Commit a frame after fill values in buffer. */
+
+status = ux_device_class_audio_write_frame_commit(stream, 192);
+
+if(status != UX_SUCCESS)
+    return;</code></pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_ux_device_class_audio10_control_process">ux_device_class_audio10_control_process</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Process USB Audio 1.0 control requests</p>
+</div>
+<div class="sect2">
+<h3 id="_prototype_23">Prototype</h3>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-C" data-lang="C">UINT ux_device_class_audio10_control_process(
+    UX_DEVICE_CLASS_AUDIO *audio,
+    UX_SLAVE_TRANSFER *transfer_request,
+    UX_DEVICE_CLASS_AUDIO10_CONTROL_GROUP *group);</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_description_23">Description</h3>
+<div class="paragraph">
+<p>This function manages basic requests sent by the host on the control endpoint with a USB Audio 1.0 specific type.</p>
+</div>
+<div class="paragraph">
+<p>Audio 1.0 features of volume and mute requests are processed in the function. When processing the requests, pre-defined data passed by the last parameter (group) is used to answer requests and store control changes.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_parameters_23">Parameters</h3>
+<div class="ulist">
+<ul>
+<li>
+<p><strong>audio</strong>: Pointer to the audio instance.</p>
+</li>
+<li>
+<p><strong>transfer</strong>: Pointer to the transfer request instance.</p>
+</li>
+<li>
+<p><strong>group</strong>: Data group for request process.</p>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_return_value_13">Return Value</h3>
+<div class="ulist">
+<ul>
+<li>
+<p><strong>UX_SUCCESS</strong> (0x00) This operation was successful.</p>
+</li>
+<li>
+<p><strong>UX_ERROR</strong> (0xFF) Error from function</p>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_example_23">Example</h3>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-C" data-lang="C">/* Initialize audio 1.0 control values. */
+
+audio_control[0].ux_device_class_audio10_control_fu_id = 2;
+audio_control[0].ux_device_class_audio10_control_mute[0] = 0;
+audio_control[0].ux_device_class_audio10_control_volume[0] = 0;
+audio_control[1].ux_device_class_audio10_control_fu_id = 5;
+audio_control[1].ux_device_class_audio10_control_mute[0] = 0;
+audio_control[1].ux_device_class_audio10_control_volume[0] = 0;
+
+/* Handle request and update control values.
+Note here only mute and volume for master channel is supported.
+*/
+
+status = ux_device_class_audio10_control_process(audio, transfer, &amp;group);
+if (status == UX_SUCCESS)
+{
+    /* Request handled, check changes */
+    switch(audio_control[0].ux_device_class_audio10_control_changed)
+    {
+        case UX_DEVICE_CLASS_AUDIO10_CONTROL_MUTE_CHANGED:
+        case UX_DEVICE_CLASS_AUDIO10_CONTROL_VOLUME_CHANGED:
+        default: break;
+    }
+}</code></pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_ux_device_class_audio20_control_process">ux_device_class_audio20_control_process</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Process USB Audio 1.0 control requests</p>
+</div>
+<div class="sect2">
+<h3 id="_prototype_24">Prototype</h3>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-C" data-lang="C">UINT ux_device_class_audio20_control_process(
+    UX_DEVICE_CLASS_AUDIO *audio,
+    UX_SLAVE_TRANSFER *transfer_request,
+    UX_DEVICE_CLASS_AUDIO20_CONTROL_GROUP *group);</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_description_24">Description</h3>
+<div class="paragraph">
+<p>This function manages basic requests sent by the host on the control endpoint with a USB Audio 2.0 specific type.</p>
+</div>
+<div class="paragraph">
+<p>Audio 2.0 sampling rate (assumed single fixed frequency), features of volume and mute requests are processed in the function. When processing the requests, pre-defined data passed by the last parameter (group) is used to answer requests and store control changes.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_parameters_24">Parameters</h3>
+<div class="ulist">
+<ul>
+<li>
+<p><strong>audio</strong>: Pointer to the audio instance.</p>
+</li>
+<li>
+<p><strong>transfer</strong>: Pointer to the transfer request instance.</p>
+</li>
+<li>
+<p><strong>group</strong>: Data group for request process.</p>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_return_value_14">Return Value</h3>
+<div class="ulist">
+<ul>
+<li>
+<p><strong>UX_SUCCESS</strong> (0x00) This operation was successful.</p>
+</li>
+<li>
+<p><strong>UX_ERROR</strong> (0xFF) Error from function</p>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_example_24">Example</h3>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-C" data-lang="C">/* Initialize audio 2.0 control values. */
+
+audio_control[0].ux_device_class_audio20_control_cs_id = 0x10;
+audio_control[0].ux_device_class_audio20_control_sampling_frequency = 48000;
+audio_control[0].ux_device_class_audio20_control_fu_id = 2;
+audio_control[0].ux_device_class_audio20_control_mute[0] = 0;
+audio_control[0].ux_device_class_audio20_control_volume_min[0] = 0;
+audio_control[0].ux_device_class_audio20_control_volume_max[0] = 100;
+audio_control[0].ux_device_class_audio20_control_volume[0] = 50;
+audio_control[1].ux_device_class_audio20_control_cs_id = 0x10;
+audio_control[1].ux_device_class_audio20_control_sampling_frequency = 48000;
+audio_control[1].ux_device_class_audio20_control_fu_id = 5;
+audio_control[1].ux_device_class_audio20_control_mute[0] = 0;
+audio_control[1].ux_device_class_audio20_control_volume_min[0] = 0;
+audio_control[1].ux_device_class_audio20_control_volume_max[0] = 100;
+audio_control[1].ux_device_class_audio20_control_volume[0] = 50;
+
+/* Handle request and update control values.
+Note here only mute and volume for master channel is supported.
+*/
+
+status = ux_device_class_audio20_control_process(audio, transfer, &amp;group);
+if (status == UX_SUCCESS)
+{
+    /* Request handled, check changes */
+    switch(audio_control[0].ux_device_class_audio20_control_changed)
+    {
+        case UX_DEVICE_CLASS_AUDIO20_CONTROL_MUTE_CHANGED:
+        case UX_DEVICE_CLASS_AUDIO20_CONTROL_VOLUME_CHANGED:
+        default: break;
+    }
+}</code></pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_usb_device_printer_class">USB Device printer Class</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>The USB device printer class allows for a USB host system to communicate with the device as a printer. This class is based on the USB standard.</p>
+</div>
+<div class="paragraph">
+<p>A printer compliant device framework needs to be declared by the device stack. An example is found here below.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-c" data-lang="c">static unsigned char device_framework_full_speed[] = {
+
+    /* Device descriptor     18 bytes
+       0x00 bDeviceClass:    refer to interface descriptor
+       0x00 bDeviceSubclass: refer to interface descriptor
+       0x00 bDeviceProtocol: refer to interface descriptor
+       idVendor &amp; idProduct - http://www.linux-usb.org/usb.ids
+    */
+    0x12, 0x01, 0x10, 0x01,
+    0x00, 0x00, 0x00,
+    0x08,
+    0x84, 0x84, 0x00, 0x00,
+    0x00, 0x01,
+    0x01, 0x02, 0x03,
+    0x01,
+
+    /* Configuration 1 descriptor 9 bytes. */
+    0x09, 0x02, 0x20, 0x00, 0x01, 0x01, 0x00, 0xc0, 0x32,
+
+    /* Interface descriptor. 8 bytes
+       0x07 bInterfaceClass: Base class for printers
+       0x01 iInterfaceSubClass: subclass code for printers
+       0x02 bInterfaceProtocol: Bi-directional interface
+    */
+    0x09, 0x04, 0x00, 0x00, 0x02, 0x07, 0x01, 0x02, 0x00,
+
+    /* Endpoint descriptor (Bulk Out) */
+    0x07, 0x05, 0x01, 0x02, 0x40, 0x00, 0x00,
+
+    /* Endpoint descriptor (Bulk In) */
+    0x07, 0x05, 0x82, 0x02, 0x40, 0x00, 0x00,
+};</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>In addition to the regular device framework, the printer requires string descriptors. An example is given below.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-c" data-lang="c">static unsigned char string_framework[] = {
+
+    /* Manufacturer string descriptor : Index 1 - "AzureRTOS" */
+    0x09, 0x04, 0x01, 9,
+        'A','z','u','r','e','R','T','O','S',
+
+    /* Product string descriptor : Index 2 - "Printer device" */
+    0x09, 0x04, 0x02, 14,
+        'P','r','i','n','t','e','r',' ','d','e','v','i','c','e',
+
+    /* Serial Number string descriptor : Index 3 - "0001" */
+    0x09, 0x04, 0x03, 0x04,
+        0x30, 0x30, 0x30, 0x31
+};</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>The initialization of the printer class is as follows.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-c" data-lang="c">/* Set the parameters for callback when insertion/extraction of a printer device.  */
+_ux_utility_memory_set(&amp;device_printer_parameter, 0, sizeof(device_printer_parameter));
+_ux_utility_short_put_big_endian(printer_device_id, sizeof(printer_device_id));
+device_printer_parameter.ux_device_class_printer_device_id           = printer_device_id;
+device_printer_parameter.ux_device_class_printer_instance_activate   = test_printer_instance_activate;
+device_printer_parameter.ux_device_class_printer_instance_deactivate = test_printer_instance_deactivate;
+device_printer_parameter.ux_device_class_printer_soft_reset          = test_printer_soft_reset;
+/* Initialize the device printer class. This class owns both interfaces starting with 0. */
+status  = ux_device_stack_class_register(_ux_system_device_class_printer_name,
+                                         ux_device_class_printer_entry,
+                                         1, 0, &amp;device_printer_parameter);</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>The application needs to pass to the printer class a device id string array with its length saved in its first two bytes. A example of printer device id is given below.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-c" data-lang="c">/* Device printer device ID.  */
+static UCHAR printer_device_id[] =
+ {
+    "  "                                // Will be replaced by length (big endian)
+    "MFG:Generic;"                      //   manufacturer (case sensitive)
+    "MDL:Generic_/_Text_Only;"          //   model (case sensitive)
+    "CMD:1284.4;"                       //   PDL command set
+    "CLS:PRINTER;"                      //   class
+    "DES:Generic text only printer;"    //   description
+ };</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>The printer device id will be encapsulated in transfer request message and send back to host after received "GET_DEVICE_ID" command from host.
+In above example, The Generic/Text driver is selected, then RAW text will be transmitted from host to the printer device.</p>
+</div>
+<div class="paragraph">
+<p>The application would have in its body the 2 functions for activation and deactivation, as shown in the following example.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-c" data-lang="c">static VOID    test_printer_instance_activate(VOID *dummy_instance)
+{
+    if (device_printer == UX_NULL)
+        device_printer = (UX_DEVICE_CLASS_PRINTER *)dummy_instance;
+}
+
+static VOID    test_printer_instance_deactivate(VOID *dummy_instance)
+{
+    if ((VOID*)device_printer == dummy_instance)
+        device_printer = UX_NULL;
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>It is not recommended to do anything within these functions but to memorize the instance of the class and synchronize with the rest of the application.</p>
+</div>
+<div class="paragraph">
+<p>The application can provide a soft reset callback notification function, to get notified on "SOFT_RESET" request from host side.</p>
+</div>
+<div class="paragraph">
+<p>The USBX printer class supports the following standard printer commands from the host.</p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 33.3333%;">
+<col style="width: 33.3333%;">
+<col style="width: 33.3334%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Command name</th>
+<th class="tableblock halign-left valign-top">Value</th>
+<th class="tableblock halign-left valign-top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">GET_DEVICE_ID</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">0x00</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Get the device ID, the device id array is assigned by initialization parameter</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">GET_PORT_STATUS</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">0x01</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Get the printer port status, the port status can be set by UX_DEVICE_CLASS_PRINTER_IOCTL_PORT_STATUS_SET</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">SOFT_RESET</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">0x02</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Request to execute soft reset, the reset callback function is assigned by initialization parameter</p></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p>The printer class API functions are defined below.</p>
+</div>
+<div class="sect2">
+<h3 id="_ux_device_class_printer_read">ux_device_class_printer_read</h3>
+<div class="paragraph">
+<p>Read from printer pipe</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_prototype_25">Prototype</h3>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-c" data-lang="c">UINT _ux_device_class_printer_read(
+    UX_DEVICE_CLASS_PRINTER *printer,
+    UCHAR *buffer,
+    ULONG requested_length,
+    ULONG *actual_length);</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_description_25">Description</h3>
+<div class="paragraph">
+<p>This function is called when an application needs to read from the OUT data pipe (OUT from the host, IN from the device). It is blocking.</p>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<div class="title">Note</div>
+</td>
+<td class="content">
+This functions reads raw bulk data from device, so it keeps pending until buffer is full or device terminates the transfer by a short packet (including Zero Length Packet). For more details, please refer to <a href="usbx-device-stack-5.md#general-considerations-for-bulk-transfer"><strong>General Considerations for Bulk Transfer</strong></a>.
+</td>
+</tr>
+</table>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_parameters_25">Parameters</h3>
+<div class="ulist">
+<ul>
+<li>
+<p><strong>printer</strong>: Pointer to the printer class instance.</p>
+</li>
+<li>
+<p><strong>buffer</strong>: Buffer address where data will be stored.</p>
+</li>
+<li>
+<p><strong>requested_length</strong>: The maximum length we expect.</p>
+</li>
+<li>
+<p><strong>actual_length</strong>: The length returned into the buffer.</p>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_return_value_15">Return Value</h3>
+<div class="ulist">
+<ul>
+<li>
+<p><strong>UX_SUCCESS</strong> (0x00) This operation was successful.</p>
+</li>
+<li>
+<p><strong>UX_CONFIGURATION_HANDLE_UNKNOWN</strong> (0x51) Device is no longer in the configured state.</p>
+</li>
+<li>
+<p><strong>UX_TRANSFER_NO_ANSWER</strong> (0x22) No answer from device. The device was probably disconnected while the transfer was pending.</p>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_example_25">Example</h3>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-c" data-lang="c">/* Read from the printer class. */
+
+status = ux_device_class_printer_read(device_printer, device_printer_buffer, 512, &amp;actual_length);
+
+if (status != UX_SUCCESS)
+    return;</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_ux_device_class_printer_write">ux_device_class_printer_write</h3>
+<div class="paragraph">
+<p>Write to a printer pipe</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_prototype_26">Prototype</h3>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-c" data-lang="c">UINT _ux_device_class_printer_write(
+    UX_DEVICE_CLASS_PRINTER *printer,
+    UCHAR *buffer,
+    ULONG requested_length,
+    ULONG *actual_length);</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_description_26">Description</h3>
+<div class="paragraph">
+<p>This function is called when an application needs to write to the IN data pipe (IN from the host, OUT from the device). It is blocking.</p>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<div class="title">Note</div>
+</td>
+<td class="content">
+This function writes bulk data to host. The host keeps waiting until buffer is full or there is short packet. So if transfer size is multiple of max packet size of the IN endpoint, it&#8217;s better to add another call with transfer size 0 to send ZLP, to tell host that all data is done. For more details, please refer to <a href="usbx-device-stack-5.md#general-considerations-for-bulk-transfer"><strong>General Considerations for Bulk Transfer</strong></a>.
+</td>
+</tr>
+</table>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_parameters_26">Parameters</h3>
+<div class="ulist">
+<ul>
+<li>
+<p><strong>printer</strong>: Pointer to the printer class instance.</p>
+</li>
+<li>
+<p><strong>buffer</strong>: Buffer address where data is stored.</p>
+</li>
+<li>
+<p><strong>requested_length</strong>: The length of the buffer to write.</p>
+</li>
+<li>
+<p><strong>actual_length</strong>: The length returned into the buffer after write is performed.</p>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_return_value_16">Return Value</h3>
+<div class="ulist">
+<ul>
+<li>
+<p><strong>UX_SUCCESS</strong> (0x00) This operation was successful.</p>
+</li>
+<li>
+<p><strong>UX_CONFIGURATION_HANDLE_UNKNOWN</strong> (0x51) Device is no longer in the configured state.</p>
+</li>
+<li>
+<p><strong>UX_TRANSFER_NO_ANSWER</strong> (0x22) No answer from device. The device was probably disconnected while the transfer was pending.</p>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_example_26">Example</h3>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-c" data-lang="c">/* Write to the printer class bulk in pipe. */
+status = ux_device_class_printer_write(device_printer, device_buffer, device_buffer_length, &amp;send_total);
+
+if (status != UX_SUCCESS)
+    return;</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_ux_device_class_printer_ioctl">ux_device_class_printer_ioctl</h3>
+<div class="paragraph">
+<p>Perform IOCTL on the printer interface</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_prototype_27">Prototype</h3>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-c" data-lang="c">UINT ux_device_class_printer_ioctl(
+    UX_DEVICE_CLASS_PRINTER *printer,
+    ULONG ioctl_function,
+    VOID *parameter);</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_description_27">Description</h3>
+<div class="paragraph">
+<p>This function is called when an application needs to perform various ioctl calls to the printer interface</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_parameters_27">Parameters</h3>
+<div class="ulist">
+<ul>
+<li>
+<p><strong>printer</strong>: Pointer to the printer class instance.</p>
+</li>
+<li>
+<p><strong>ioctl_function</strong>: Ioctl function to be performed.</p>
+</li>
+<li>
+<p><strong>parameter</strong>: Pointer to a parameter specific to the ioctl call.</p>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_return_value_17">Return Value</h3>
+<div class="ulist">
+<ul>
+<li>
+<p><strong>UX_SUCCESS</strong> (0x00) This operation was successful.</p>
+</li>
+<li>
+<p><strong>UX_ERROR</strong> (0xFF) Error from function</p>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_example_27">Example</h3>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-c" data-lang="c">status = ux_device_class_printer_ioctl(device_printer,
+                                       UX_DEVICE_CLASS_PRINTER_IOCTL_PORT_STATUS_SET,
+                                       (VOID *)0x73);
+
+if(status != UX_SUCCESS)
+    return;</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_ioctl_functions">Ioctl functions:</h3>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 50%;">
+<col style="width: 50%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Function</th>
+<th class="tableblock halign-left valign-top">Value</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">UX_DEVICE_CLASS_PRINTER_IOCTL_PORT_STATUS_SET</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">1</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">UX_DEVICE_CLASS_PRINTER_IOCTL_READ_TIMEOUT_SET</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">2</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">UX_DEVICE_CLASS_PRINTER_IOCTL_WRITE_TIMEOUT_SET</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">3</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="sect2">
+<h3 id="_ux_device_class_printer_ioctl_ux_device_class_printer_ioctl_port_status_set">ux_device_class_printer_ioctl: UX_DEVICE_CLASS_PRINTER_IOCTL_PORT_STATUS_SET</h3>
+<div class="paragraph">
+<p>Perform IOCTL set port status on the printer interface</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_prototype_28">Prototype</h3>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-c" data-lang="c">UINT ux_device_class_printer_ioctl(
+    UX_DEVICE_CLASS_PRINTER *printer,
+    ULONG ioctl_function,
+    VOID *parameter);</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_description_28">Description</h3>
+<div class="paragraph">
+<p>This function is called when an application needs to set port status.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_parameters_28">Parameters</h3>
+<div class="ulist">
+<ul>
+<li>
+<p><strong>printer</strong>: Pointer to the printer class instance.</p>
+</li>
+<li>
+<p><strong>ioctl_function</strong>: UX_DEVICE_CLASS_PRINTER_IOCTL_PORT_STATUS_SET</p>
+</li>
+<li>
+<p><strong>parameter</strong>: port status:</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>Printer Port Status. For more detail, please refer to document "Universal Serial Bus Device Class Definition for Printing Devices".</p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 20%;">
+<col style="width: 20%;">
+<col style="width: 20%;">
+<col style="width: 20%;">
+<col style="width: 20%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Name</th>
+<th class="tableblock halign-left valign-top">Offset</th>
+<th class="tableblock halign-left valign-top">Size</th>
+<th class="tableblock halign-left valign-top">type</th>
+<th class="tableblock halign-left valign-top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Reserved</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">0</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">3</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Bit field</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Reserved for future use; should be 0</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Not Error</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">3</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">1</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Bit field</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">1 = No Error, 0 = Error</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Selected</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">4</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">1</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Bit field</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">1 = Selected, 0 = Not Selected</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Paper Empty</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">5</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">1</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Bit field</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">1 = Paper Empty, 0 = Paper Not Empty</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Reserved</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">6</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">2</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Bit field</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Reserved for future use; should be 0</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="sect2">
+<h3 id="_return_value_18">Return Value</h3>
+<div class="paragraph">
+<p><strong>UX_SUCCESS</strong> (0x00) This operation was successful.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_example_28">Example</h3>
+<div class="paragraph">
+<p>In below example, the printer port status is set to "Paper Empty" and "Not Selected" and "Error".</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-c" data-lang="c">status = ux_device_class_printer_ioctl(device_printer,
+                                       UX_DEVICE_CLASS_PRINTER_IOCTL_PORT_STATUS_SET,
+                                       (VOID *)0x73);
+
+if(status != UX_SUCCESS)
+    return;</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_ux_device_class_printer_ioctl_ux_device_class_printer_ioctl_read_timeout_set">ux_device_class_printer_ioctl: UX_DEVICE_CLASS_PRINTER_IOCTL_READ_TIMEOUT_SET</h3>
+<div class="paragraph">
+<p>Perform IOCTL set read timeout on the printer interface</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_prototype_29">Prototype</h3>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-c" data-lang="c">UINT ux_device_class_printer_ioctl(
+    UX_DEVICE_CLASS_PRINTER *printer,
+    ULONG ioctl_function,
+    VOID *parameter);</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_description_29">Description</h3>
+<div class="paragraph">
+<p>This function is called when an application needs to set read timeout value.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_parameters_29">Parameters</h3>
+<div class="ulist">
+<ul>
+<li>
+<p><strong>printer</strong>: Pointer to the printer class instance.</p>
+</li>
+<li>
+<p><strong>ioctl_function</strong>: UX_DEVICE_CLASS_PRINTER_IOCTL_READ_TIMEOUT_SET</p>
+</li>
+<li>
+<p><strong>parameter</strong>: timeout value:</p>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_return_value_19">Return Value</h3>
+<div class="paragraph">
+<p><strong>UX_SUCCESS</strong> (0x00) This operation was successful.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_example_29">Example</h3>
+<div class="paragraph">
+<p>In below example, the printer read timeout value is set to 10000ms.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-c" data-lang="c">status = ux_device_class_printer_ioctl(device_printer,
+                                       UX_DEVICE_CLASS_PRINTER_IOCTL_READ_TIMEOUT_SET,
+                                       (VOID *)10000);
+
+if(status != UX_SUCCESS)
+    return;</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_ux_device_class_printer_ioctl_ux_device_class_printer_ioctl_write_timeout_set">ux_device_class_printer_ioctl: UX_DEVICE_CLASS_PRINTER_IOCTL_WRITE_TIMEOUT_SET</h3>
+<div class="paragraph">
+<p>Perform IOCTL set write timeout on the printer interface</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_prototype_30">Prototype</h3>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-c" data-lang="c">UINT ux_device_class_printer_ioctl(
+    UX_DEVICE_CLASS_PRINTER *printer,
+    ULONG ioctl_function,
+    VOID *parameter);</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_description_30">Description</h3>
+<div class="paragraph">
+<p>This function is called when an application needs to set write timeout value.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_parameters_30">Parameters</h3>
+<div class="ulist">
+<ul>
+<li>
+<p><strong>printer</strong>: Pointer to the printer class instance.</p>
+</li>
+<li>
+<p><strong>ioctl_function</strong>: UX_DEVICE_CLASS_PRINTER_IOCTL_WRITE_TIMEOUT_SET</p>
+</li>
+<li>
+<p><strong>parameter</strong>: timeout value:</p>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_return_value_20">Return Value</h3>
+<div class="paragraph">
+<p><strong>UX_SUCCESS</strong> (0x00) This operation was successful.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_example_30">Example</h3>
+<div class="paragraph">
+<p>In below example, the printer write timeout value is set to 10000ms.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-c" data-lang="c">status = ux_device_class_printer_ioctl(device_printer,
+                                       UX_DEVICE_CLASS_PRINTER_IOCTL_WRITE_TIMEOUT_SET,
+                                       (VOID *)10000);
+
+if(status != UX_SUCCESS)
+    return;</code></pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div id="footer">
+<div id="footer-text">
+Last updated 2024-12-19 22:09:56 -0500
+</div>
+</div>
+</body>
+</html>

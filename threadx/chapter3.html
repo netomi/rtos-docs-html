@@ -1,0 +1,2320 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="generator" content="Asciidoctor 2.0.16">
+<meta name="description" content="This chapter contains a description of the high-performance ThreadX kernel from a functional perspective.">
+<title>Chapter 3 - Functional Components of ThreadX</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:300,300italic,400,400italic,600,600italic%7CNoto+Serif:400,400italic,700,700italic%7CDroid+Sans+Mono:400,700">
+<style>
+/*! Asciidoctor default stylesheet | MIT License | https://asciidoctor.org */
+/* Uncomment the following line when using as a custom stylesheet */
+/* @import "https://fonts.googleapis.com/css?family=Open+Sans:300,300italic,400,400italic,600,600italic%7CNoto+Serif:400,400italic,700,700italic%7CDroid+Sans+Mono:400,700"; */
+html{font-family:sans-serif;-webkit-text-size-adjust:100%}
+a{background:none}
+a:focus{outline:thin dotted}
+a:active,a:hover{outline:0}
+h1{font-size:2em;margin:.67em 0}
+b,strong{font-weight:bold}
+abbr{font-size:.9em}
+abbr[title]{cursor:help;border-bottom:1px dotted #dddddf;text-decoration:none}
+dfn{font-style:italic}
+hr{height:0}
+mark{background:#ff0;color:#000}
+code,kbd,pre,samp{font-family:monospace;font-size:1em}
+pre{white-space:pre-wrap}
+q{quotes:"\201C" "\201D" "\2018" "\2019"}
+small{font-size:80%}
+sub,sup{font-size:75%;line-height:0;position:relative;vertical-align:baseline}
+sup{top:-.5em}
+sub{bottom:-.25em}
+img{border:0}
+svg:not(:root){overflow:hidden}
+figure{margin:0}
+audio,video{display:inline-block}
+audio:not([controls]){display:none;height:0}
+fieldset{border:1px solid silver;margin:0 2px;padding:.35em .625em .75em}
+legend{border:0;padding:0}
+button,input,select,textarea{font-family:inherit;font-size:100%;margin:0}
+button,input{line-height:normal}
+button,select{text-transform:none}
+button,html input[type=button],input[type=reset],input[type=submit]{-webkit-appearance:button;cursor:pointer}
+button[disabled],html input[disabled]{cursor:default}
+input[type=checkbox],input[type=radio]{padding:0}
+button::-moz-focus-inner,input::-moz-focus-inner{border:0;padding:0}
+textarea{overflow:auto;vertical-align:top}
+table{border-collapse:collapse;border-spacing:0}
+*,::before,::after{box-sizing:border-box}
+html,body{font-size:100%}
+body{background:#fff;color:rgba(0,0,0,.8);padding:0;margin:0;font-family:"Noto Serif","DejaVu Serif",serif;line-height:1;position:relative;cursor:auto;-moz-tab-size:4;-o-tab-size:4;tab-size:4;word-wrap:anywhere;-moz-osx-font-smoothing:grayscale;-webkit-font-smoothing:antialiased}
+a:hover{cursor:pointer}
+img,object,embed{max-width:100%;height:auto}
+object,embed{height:100%}
+img{-ms-interpolation-mode:bicubic}
+.left{float:left!important}
+.right{float:right!important}
+.text-left{text-align:left!important}
+.text-right{text-align:right!important}
+.text-center{text-align:center!important}
+.text-justify{text-align:justify!important}
+.hide{display:none}
+img,object,svg{display:inline-block;vertical-align:middle}
+textarea{height:auto;min-height:50px}
+select{width:100%}
+.subheader,.admonitionblock td.content>.title,.audioblock>.title,.exampleblock>.title,.imageblock>.title,.listingblock>.title,.literalblock>.title,.stemblock>.title,.openblock>.title,.paragraph>.title,.quoteblock>.title,table.tableblock>.title,.verseblock>.title,.videoblock>.title,.dlist>.title,.olist>.title,.ulist>.title,.qlist>.title,.hdlist>.title{line-height:1.45;color:#7a2518;font-weight:400;margin-top:0;margin-bottom:.25em}
+div,dl,dt,dd,ul,ol,li,h1,h2,h3,#toctitle,.sidebarblock>.content>.title,h4,h5,h6,pre,form,p,blockquote,th,td{margin:0;padding:0}
+a{color:#2156a5;text-decoration:underline;line-height:inherit}
+a:hover,a:focus{color:#1d4b8f}
+a img{border:0}
+p{line-height:1.6;margin-bottom:1.25em;text-rendering:optimizeLegibility}
+p aside{font-size:.875em;line-height:1.35;font-style:italic}
+h1,h2,h3,#toctitle,.sidebarblock>.content>.title,h4,h5,h6{font-family:"Open Sans","DejaVu Sans",sans-serif;font-weight:300;font-style:normal;color:#ba3925;text-rendering:optimizeLegibility;margin-top:1em;margin-bottom:.5em;line-height:1.0125em}
+h1 small,h2 small,h3 small,#toctitle small,.sidebarblock>.content>.title small,h4 small,h5 small,h6 small{font-size:60%;color:#e99b8f;line-height:0}
+h1{font-size:2.125em}
+h2{font-size:1.6875em}
+h3,#toctitle,.sidebarblock>.content>.title{font-size:1.375em}
+h4,h5{font-size:1.125em}
+h6{font-size:1em}
+hr{border:solid #dddddf;border-width:1px 0 0;clear:both;margin:1.25em 0 1.1875em}
+em,i{font-style:italic;line-height:inherit}
+strong,b{font-weight:bold;line-height:inherit}
+small{font-size:60%;line-height:inherit}
+code{font-family:"Droid Sans Mono","DejaVu Sans Mono",monospace;font-weight:400;color:rgba(0,0,0,.9)}
+ul,ol,dl{line-height:1.6;margin-bottom:1.25em;list-style-position:outside;font-family:inherit}
+ul,ol{margin-left:1.5em}
+ul li ul,ul li ol{margin-left:1.25em;margin-bottom:0}
+ul.square li ul,ul.circle li ul,ul.disc li ul{list-style:inherit}
+ul.square{list-style-type:square}
+ul.circle{list-style-type:circle}
+ul.disc{list-style-type:disc}
+ol li ul,ol li ol{margin-left:1.25em;margin-bottom:0}
+dl dt{margin-bottom:.3125em;font-weight:bold}
+dl dd{margin-bottom:1.25em}
+blockquote{margin:0 0 1.25em;padding:.5625em 1.25em 0 1.1875em;border-left:1px solid #ddd}
+blockquote,blockquote p{line-height:1.6;color:rgba(0,0,0,.85)}
+@media screen and (min-width:768px){h1,h2,h3,#toctitle,.sidebarblock>.content>.title,h4,h5,h6{line-height:1.2}
+h1{font-size:2.75em}
+h2{font-size:2.3125em}
+h3,#toctitle,.sidebarblock>.content>.title{font-size:1.6875em}
+h4{font-size:1.4375em}}
+table{background:#fff;margin-bottom:1.25em;border:1px solid #dedede;word-wrap:normal}
+table thead,table tfoot{background:#f7f8f7}
+table thead tr th,table thead tr td,table tfoot tr th,table tfoot tr td{padding:.5em .625em .625em;font-size:inherit;color:rgba(0,0,0,.8);text-align:left}
+table tr th,table tr td{padding:.5625em .625em;font-size:inherit;color:rgba(0,0,0,.8)}
+table tr.even,table tr.alt{background:#f8f8f7}
+table thead tr th,table tfoot tr th,table tbody tr td,table tr td,table tfoot tr td{line-height:1.6}
+h1,h2,h3,#toctitle,.sidebarblock>.content>.title,h4,h5,h6{line-height:1.2;word-spacing:-.05em}
+h1 strong,h2 strong,h3 strong,#toctitle strong,.sidebarblock>.content>.title strong,h4 strong,h5 strong,h6 strong{font-weight:400}
+.center{margin-left:auto;margin-right:auto}
+.stretch{width:100%}
+.clearfix::before,.clearfix::after,.float-group::before,.float-group::after{content:" ";display:table}
+.clearfix::after,.float-group::after{clear:both}
+:not(pre).nobreak{word-wrap:normal}
+:not(pre).nowrap{white-space:nowrap}
+:not(pre).pre-wrap{white-space:pre-wrap}
+:not(pre):not([class^=L])>code{font-size:.9375em;font-style:normal!important;letter-spacing:0;padding:.1em .5ex;word-spacing:-.15em;background:#f7f7f8;border-radius:4px;line-height:1.45;text-rendering:optimizeSpeed}
+pre{color:rgba(0,0,0,.9);font-family:"Droid Sans Mono","DejaVu Sans Mono",monospace;line-height:1.45;text-rendering:optimizeSpeed}
+pre code,pre pre{color:inherit;font-size:inherit;line-height:inherit}
+pre>code{display:block}
+pre.nowrap,pre.nowrap pre{white-space:pre;word-wrap:normal}
+em em{font-style:normal}
+strong strong{font-weight:400}
+.keyseq{color:rgba(51,51,51,.8)}
+kbd{font-family:"Droid Sans Mono","DejaVu Sans Mono",monospace;display:inline-block;color:rgba(0,0,0,.8);font-size:.65em;line-height:1.45;background:#f7f7f7;border:1px solid #ccc;border-radius:3px;box-shadow:0 1px 0 rgba(0,0,0,.2),inset 0 0 0 .1em #fff;margin:0 .15em;padding:.2em .5em;vertical-align:middle;position:relative;top:-.1em;white-space:nowrap}
+.keyseq kbd:first-child{margin-left:0}
+.keyseq kbd:last-child{margin-right:0}
+.menuseq,.menuref{color:#000}
+.menuseq b:not(.caret),.menuref{font-weight:inherit}
+.menuseq{word-spacing:-.02em}
+.menuseq b.caret{font-size:1.25em;line-height:.8}
+.menuseq i.caret{font-weight:bold;text-align:center;width:.45em}
+b.button::before,b.button::after{position:relative;top:-1px;font-weight:400}
+b.button::before{content:"[";padding:0 3px 0 2px}
+b.button::after{content:"]";padding:0 2px 0 3px}
+p a>code:hover{color:rgba(0,0,0,.9)}
+#header,#content,#footnotes,#footer{width:100%;margin:0 auto;max-width:62.5em;*zoom:1;position:relative;padding-left:.9375em;padding-right:.9375em}
+#header::before,#header::after,#content::before,#content::after,#footnotes::before,#footnotes::after,#footer::before,#footer::after{content:" ";display:table}
+#header::after,#content::after,#footnotes::after,#footer::after{clear:both}
+#content{margin-top:1.25em}
+#content::before{content:none}
+#header>h1:first-child{color:rgba(0,0,0,.85);margin-top:2.25rem;margin-bottom:0}
+#header>h1:first-child+#toc{margin-top:8px;border-top:1px solid #dddddf}
+#header>h1:only-child,body.toc2 #header>h1:nth-last-child(2){border-bottom:1px solid #dddddf;padding-bottom:8px}
+#header .details{border-bottom:1px solid #dddddf;line-height:1.45;padding-top:.25em;padding-bottom:.25em;padding-left:.25em;color:rgba(0,0,0,.6);display:flex;flex-flow:row wrap}
+#header .details span:first-child{margin-left:-.125em}
+#header .details span.email a{color:rgba(0,0,0,.85)}
+#header .details br{display:none}
+#header .details br+span::before{content:"\00a0\2013\00a0"}
+#header .details br+span.author::before{content:"\00a0\22c5\00a0";color:rgba(0,0,0,.85)}
+#header .details br+span#revremark::before{content:"\00a0|\00a0"}
+#header #revnumber{text-transform:capitalize}
+#header #revnumber::after{content:"\00a0"}
+#content>h1:first-child:not([class]){color:rgba(0,0,0,.85);border-bottom:1px solid #dddddf;padding-bottom:8px;margin-top:0;padding-top:1rem;margin-bottom:1.25rem}
+#toc{border-bottom:1px solid #e7e7e9;padding-bottom:.5em}
+#toc>ul{margin-left:.125em}
+#toc ul.sectlevel0>li>a{font-style:italic}
+#toc ul.sectlevel0 ul.sectlevel1{margin:.5em 0}
+#toc ul{font-family:"Open Sans","DejaVu Sans",sans-serif;list-style-type:none}
+#toc li{line-height:1.3334;margin-top:.3334em}
+#toc a{text-decoration:none}
+#toc a:active{text-decoration:underline}
+#toctitle{color:#7a2518;font-size:1.2em}
+@media screen and (min-width:768px){#toctitle{font-size:1.375em}
+body.toc2{padding-left:15em;padding-right:0}
+#toc.toc2{margin-top:0!important;background:#f8f8f7;position:fixed;width:15em;left:0;top:0;border-right:1px solid #e7e7e9;border-top-width:0!important;border-bottom-width:0!important;z-index:1000;padding:1.25em 1em;height:100%;overflow:auto}
+#toc.toc2 #toctitle{margin-top:0;margin-bottom:.8rem;font-size:1.2em}
+#toc.toc2>ul{font-size:.9em;margin-bottom:0}
+#toc.toc2 ul ul{margin-left:0;padding-left:1em}
+#toc.toc2 ul.sectlevel0 ul.sectlevel1{padding-left:0;margin-top:.5em;margin-bottom:.5em}
+body.toc2.toc-right{padding-left:0;padding-right:15em}
+body.toc2.toc-right #toc.toc2{border-right-width:0;border-left:1px solid #e7e7e9;left:auto;right:0}}
+@media screen and (min-width:1280px){body.toc2{padding-left:20em;padding-right:0}
+#toc.toc2{width:20em}
+#toc.toc2 #toctitle{font-size:1.375em}
+#toc.toc2>ul{font-size:.95em}
+#toc.toc2 ul ul{padding-left:1.25em}
+body.toc2.toc-right{padding-left:0;padding-right:20em}}
+#content #toc{border:1px solid #e0e0dc;margin-bottom:1.25em;padding:1.25em;background:#f8f8f7;border-radius:4px}
+#content #toc>:first-child{margin-top:0}
+#content #toc>:last-child{margin-bottom:0}
+#footer{max-width:none;background:rgba(0,0,0,.8);padding:1.25em}
+#footer-text{color:hsla(0,0%,100%,.8);line-height:1.44}
+#content{margin-bottom:.625em}
+.sect1{padding-bottom:.625em}
+@media screen and (min-width:768px){#content{margin-bottom:1.25em}
+.sect1{padding-bottom:1.25em}}
+.sect1:last-child{padding-bottom:0}
+.sect1+.sect1{border-top:1px solid #e7e7e9}
+#content h1>a.anchor,h2>a.anchor,h3>a.anchor,#toctitle>a.anchor,.sidebarblock>.content>.title>a.anchor,h4>a.anchor,h5>a.anchor,h6>a.anchor{position:absolute;z-index:1001;width:1.5ex;margin-left:-1.5ex;display:block;text-decoration:none!important;visibility:hidden;text-align:center;font-weight:400}
+#content h1>a.anchor::before,h2>a.anchor::before,h3>a.anchor::before,#toctitle>a.anchor::before,.sidebarblock>.content>.title>a.anchor::before,h4>a.anchor::before,h5>a.anchor::before,h6>a.anchor::before{content:"\00A7";font-size:.85em;display:block;padding-top:.1em}
+#content h1:hover>a.anchor,#content h1>a.anchor:hover,h2:hover>a.anchor,h2>a.anchor:hover,h3:hover>a.anchor,#toctitle:hover>a.anchor,.sidebarblock>.content>.title:hover>a.anchor,h3>a.anchor:hover,#toctitle>a.anchor:hover,.sidebarblock>.content>.title>a.anchor:hover,h4:hover>a.anchor,h4>a.anchor:hover,h5:hover>a.anchor,h5>a.anchor:hover,h6:hover>a.anchor,h6>a.anchor:hover{visibility:visible}
+#content h1>a.link,h2>a.link,h3>a.link,#toctitle>a.link,.sidebarblock>.content>.title>a.link,h4>a.link,h5>a.link,h6>a.link{color:#ba3925;text-decoration:none}
+#content h1>a.link:hover,h2>a.link:hover,h3>a.link:hover,#toctitle>a.link:hover,.sidebarblock>.content>.title>a.link:hover,h4>a.link:hover,h5>a.link:hover,h6>a.link:hover{color:#a53221}
+details,.audioblock,.imageblock,.literalblock,.listingblock,.stemblock,.videoblock{margin-bottom:1.25em}
+details{margin-left:1.25rem}
+details>summary{cursor:pointer;display:block;position:relative;line-height:1.6;margin-bottom:.625rem;-webkit-tap-highlight-color:transparent}
+details>summary::before{content:"";border:solid transparent;border-left:solid;border-width:.3em 0 .3em .5em;position:absolute;top:.5em;left:-1.25rem;transform:translateX(15%)}
+details[open]>summary::before{border:solid transparent;border-top:solid;border-width:.5em .3em 0;transform:translateY(15%)}
+details>summary::after{content:"";width:1.25rem;height:1em;position:absolute;top:.3em;left:-1.25rem}
+.admonitionblock td.content>.title,.audioblock>.title,.exampleblock>.title,.imageblock>.title,.listingblock>.title,.literalblock>.title,.stemblock>.title,.openblock>.title,.paragraph>.title,.quoteblock>.title,table.tableblock>.title,.verseblock>.title,.videoblock>.title,.dlist>.title,.olist>.title,.ulist>.title,.qlist>.title,.hdlist>.title{text-rendering:optimizeLegibility;text-align:left;font-family:"Noto Serif","DejaVu Serif",serif;font-size:1rem;font-style:italic}
+table.tableblock.fit-content>caption.title{white-space:nowrap;width:0}
+.paragraph.lead>p,#preamble>.sectionbody>[class=paragraph]:first-of-type p{font-size:1.21875em;line-height:1.6;color:rgba(0,0,0,.85)}
+.admonitionblock>table{border-collapse:separate;border:0;background:none;width:100%}
+.admonitionblock>table td.icon{text-align:center;width:80px}
+.admonitionblock>table td.icon img{max-width:none}
+.admonitionblock>table td.icon .title{font-weight:bold;font-family:"Open Sans","DejaVu Sans",sans-serif;text-transform:uppercase}
+.admonitionblock>table td.content{padding-left:1.125em;padding-right:1.25em;border-left:1px solid #dddddf;color:rgba(0,0,0,.6);word-wrap:anywhere}
+.admonitionblock>table td.content>:last-child>:last-child{margin-bottom:0}
+.exampleblock>.content{border:1px solid #e6e6e6;margin-bottom:1.25em;padding:1.25em;background:#fff;border-radius:4px}
+.exampleblock>.content>:first-child{margin-top:0}
+.exampleblock>.content>:last-child{margin-bottom:0}
+.sidebarblock{border:1px solid #dbdbd6;margin-bottom:1.25em;padding:1.25em;background:#f3f3f2;border-radius:4px}
+.sidebarblock>:first-child{margin-top:0}
+.sidebarblock>:last-child{margin-bottom:0}
+.sidebarblock>.content>.title{color:#7a2518;margin-top:0;text-align:center}
+.exampleblock>.content>:last-child>:last-child,.exampleblock>.content .olist>ol>li:last-child>:last-child,.exampleblock>.content .ulist>ul>li:last-child>:last-child,.exampleblock>.content .qlist>ol>li:last-child>:last-child,.sidebarblock>.content>:last-child>:last-child,.sidebarblock>.content .olist>ol>li:last-child>:last-child,.sidebarblock>.content .ulist>ul>li:last-child>:last-child,.sidebarblock>.content .qlist>ol>li:last-child>:last-child{margin-bottom:0}
+.literalblock pre,.listingblock>.content>pre{border-radius:4px;overflow-x:auto;padding:1em;font-size:.8125em}
+@media screen and (min-width:768px){.literalblock pre,.listingblock>.content>pre{font-size:.90625em}}
+@media screen and (min-width:1280px){.literalblock pre,.listingblock>.content>pre{font-size:1em}}
+.literalblock pre,.listingblock>.content>pre:not(.highlight),.listingblock>.content>pre[class=highlight],.listingblock>.content>pre[class^="highlight "]{background:#f7f7f8}
+.literalblock.output pre{color:#f7f7f8;background:rgba(0,0,0,.9)}
+.listingblock>.content{position:relative}
+.listingblock code[data-lang]::before{display:none;content:attr(data-lang);position:absolute;font-size:.75em;top:.425rem;right:.5rem;line-height:1;text-transform:uppercase;color:inherit;opacity:.5}
+.listingblock:hover code[data-lang]::before{display:block}
+.listingblock.terminal pre .command::before{content:attr(data-prompt);padding-right:.5em;color:inherit;opacity:.5}
+.listingblock.terminal pre .command:not([data-prompt])::before{content:"$"}
+.listingblock pre.highlightjs{padding:0}
+.listingblock pre.highlightjs>code{padding:1em;border-radius:4px}
+.listingblock pre.prettyprint{border-width:0}
+.prettyprint{background:#f7f7f8}
+pre.prettyprint .linenums{line-height:1.45;margin-left:2em}
+pre.prettyprint li{background:none;list-style-type:inherit;padding-left:0}
+pre.prettyprint li code[data-lang]::before{opacity:1}
+pre.prettyprint li:not(:first-child) code[data-lang]::before{display:none}
+table.linenotable{border-collapse:separate;border:0;margin-bottom:0;background:none}
+table.linenotable td[class]{color:inherit;vertical-align:top;padding:0;line-height:inherit;white-space:normal}
+table.linenotable td.code{padding-left:.75em}
+table.linenotable td.linenos{border-right:1px solid;opacity:.35;padding-right:.5em}
+pre.pygments .lineno{border-right:1px solid;opacity:.35;display:inline-block;margin-right:.75em}
+pre.pygments .lineno::before{content:"";margin-right:-.125em}
+.quoteblock{margin:0 1em 1.25em 1.5em;display:table}
+.quoteblock:not(.excerpt)>.title{margin-left:-1.5em;margin-bottom:.75em}
+.quoteblock blockquote,.quoteblock p{color:rgba(0,0,0,.85);font-size:1.15rem;line-height:1.75;word-spacing:.1em;letter-spacing:0;font-style:italic;text-align:justify}
+.quoteblock blockquote{margin:0;padding:0;border:0}
+.quoteblock blockquote::before{content:"\201c";float:left;font-size:2.75em;font-weight:bold;line-height:.6em;margin-left:-.6em;color:#7a2518;text-shadow:0 1px 2px rgba(0,0,0,.1)}
+.quoteblock blockquote>.paragraph:last-child p{margin-bottom:0}
+.quoteblock .attribution{margin-top:.75em;margin-right:.5ex;text-align:right}
+.verseblock{margin:0 1em 1.25em}
+.verseblock pre{font-family:"Open Sans","DejaVu Sans",sans-serif;font-size:1.15rem;color:rgba(0,0,0,.85);font-weight:300;text-rendering:optimizeLegibility}
+.verseblock pre strong{font-weight:400}
+.verseblock .attribution{margin-top:1.25rem;margin-left:.5ex}
+.quoteblock .attribution,.verseblock .attribution{font-size:.9375em;line-height:1.45;font-style:italic}
+.quoteblock .attribution br,.verseblock .attribution br{display:none}
+.quoteblock .attribution cite,.verseblock .attribution cite{display:block;letter-spacing:-.025em;color:rgba(0,0,0,.6)}
+.quoteblock.abstract blockquote::before,.quoteblock.excerpt blockquote::before,.quoteblock .quoteblock blockquote::before{display:none}
+.quoteblock.abstract blockquote,.quoteblock.abstract p,.quoteblock.excerpt blockquote,.quoteblock.excerpt p,.quoteblock .quoteblock blockquote,.quoteblock .quoteblock p{line-height:1.6;word-spacing:0}
+.quoteblock.abstract{margin:0 1em 1.25em;display:block}
+.quoteblock.abstract>.title{margin:0 0 .375em;font-size:1.15em;text-align:center}
+.quoteblock.excerpt>blockquote,.quoteblock .quoteblock{padding:0 0 .25em 1em;border-left:.25em solid #dddddf}
+.quoteblock.excerpt,.quoteblock .quoteblock{margin-left:0}
+.quoteblock.excerpt blockquote,.quoteblock.excerpt p,.quoteblock .quoteblock blockquote,.quoteblock .quoteblock p{color:inherit;font-size:1.0625rem}
+.quoteblock.excerpt .attribution,.quoteblock .quoteblock .attribution{color:inherit;font-size:.85rem;text-align:left;margin-right:0}
+p.tableblock:last-child{margin-bottom:0}
+td.tableblock>.content{margin-bottom:1.25em;word-wrap:anywhere}
+td.tableblock>.content>:last-child{margin-bottom:-1.25em}
+table.tableblock,th.tableblock,td.tableblock{border:0 solid #dedede}
+table.grid-all>*>tr>*{border-width:1px}
+table.grid-cols>*>tr>*{border-width:0 1px}
+table.grid-rows>*>tr>*{border-width:1px 0}
+table.frame-all{border-width:1px}
+table.frame-ends{border-width:1px 0}
+table.frame-sides{border-width:0 1px}
+table.frame-none>colgroup+*>:first-child>*,table.frame-sides>colgroup+*>:first-child>*{border-top-width:0}
+table.frame-none>:last-child>:last-child>*,table.frame-sides>:last-child>:last-child>*{border-bottom-width:0}
+table.frame-none>*>tr>:first-child,table.frame-ends>*>tr>:first-child{border-left-width:0}
+table.frame-none>*>tr>:last-child,table.frame-ends>*>tr>:last-child{border-right-width:0}
+table.stripes-all tr,table.stripes-odd tr:nth-of-type(odd),table.stripes-even tr:nth-of-type(even),table.stripes-hover tr:hover{background:#f8f8f7}
+th.halign-left,td.halign-left{text-align:left}
+th.halign-right,td.halign-right{text-align:right}
+th.halign-center,td.halign-center{text-align:center}
+th.valign-top,td.valign-top{vertical-align:top}
+th.valign-bottom,td.valign-bottom{vertical-align:bottom}
+th.valign-middle,td.valign-middle{vertical-align:middle}
+table thead th,table tfoot th{font-weight:bold}
+tbody tr th{background:#f7f8f7}
+tbody tr th,tbody tr th p,tfoot tr th,tfoot tr th p{color:rgba(0,0,0,.8);font-weight:bold}
+p.tableblock>code:only-child{background:none;padding:0}
+p.tableblock{font-size:1em}
+ol{margin-left:1.75em}
+ul li ol{margin-left:1.5em}
+dl dd{margin-left:1.125em}
+dl dd:last-child,dl dd:last-child>:last-child{margin-bottom:0}
+ol>li p,ul>li p,ul dd,ol dd,.olist .olist,.ulist .ulist,.ulist .olist,.olist .ulist{margin-bottom:.625em}
+ul.checklist,ul.none,ol.none,ul.no-bullet,ol.no-bullet,ol.unnumbered,ul.unstyled,ol.unstyled{list-style-type:none}
+ul.no-bullet,ol.no-bullet,ol.unnumbered{margin-left:.625em}
+ul.unstyled,ol.unstyled{margin-left:0}
+ul.checklist>li>p:first-child{margin-left:-1em}
+ul.checklist>li>p:first-child>.fa-square-o:first-child,ul.checklist>li>p:first-child>.fa-check-square-o:first-child{width:1.25em;font-size:.8em;position:relative;bottom:.125em}
+ul.checklist>li>p:first-child>input[type=checkbox]:first-child{margin-right:.25em}
+ul.inline{display:flex;flex-flow:row wrap;list-style:none;margin:0 0 .625em -1.25em}
+ul.inline>li{margin-left:1.25em}
+.unstyled dl dt{font-weight:400;font-style:normal}
+ol.arabic{list-style-type:decimal}
+ol.decimal{list-style-type:decimal-leading-zero}
+ol.loweralpha{list-style-type:lower-alpha}
+ol.upperalpha{list-style-type:upper-alpha}
+ol.lowerroman{list-style-type:lower-roman}
+ol.upperroman{list-style-type:upper-roman}
+ol.lowergreek{list-style-type:lower-greek}
+.hdlist>table,.colist>table{border:0;background:none}
+.hdlist>table>tbody>tr,.colist>table>tbody>tr{background:none}
+td.hdlist1,td.hdlist2{vertical-align:top;padding:0 .625em}
+td.hdlist1{font-weight:bold;padding-bottom:1.25em}
+td.hdlist2{word-wrap:anywhere}
+.literalblock+.colist,.listingblock+.colist{margin-top:-.5em}
+.colist td:not([class]):first-child{padding:.4em .75em 0;line-height:1;vertical-align:top}
+.colist td:not([class]):first-child img{max-width:none}
+.colist td:not([class]):last-child{padding:.25em 0}
+.thumb,.th{line-height:0;display:inline-block;border:4px solid #fff;box-shadow:0 0 0 1px #ddd}
+.imageblock.left{margin:.25em .625em 1.25em 0}
+.imageblock.right{margin:.25em 0 1.25em .625em}
+.imageblock>.title{margin-bottom:0}
+.imageblock.thumb,.imageblock.th{border-width:6px}
+.imageblock.thumb>.title,.imageblock.th>.title{padding:0 .125em}
+.image.left,.image.right{margin-top:.25em;margin-bottom:.25em;display:inline-block;line-height:0}
+.image.left{margin-right:.625em}
+.image.right{margin-left:.625em}
+a.image{text-decoration:none;display:inline-block}
+a.image object{pointer-events:none}
+sup.footnote,sup.footnoteref{font-size:.875em;position:static;vertical-align:super}
+sup.footnote a,sup.footnoteref a{text-decoration:none}
+sup.footnote a:active,sup.footnoteref a:active{text-decoration:underline}
+#footnotes{padding-top:.75em;padding-bottom:.75em;margin-bottom:.625em}
+#footnotes hr{width:20%;min-width:6.25em;margin:-.25em 0 .75em;border-width:1px 0 0}
+#footnotes .footnote{padding:0 .375em 0 .225em;line-height:1.3334;font-size:.875em;margin-left:1.2em;margin-bottom:.2em}
+#footnotes .footnote a:first-of-type{font-weight:bold;text-decoration:none;margin-left:-1.05em}
+#footnotes .footnote:last-of-type{margin-bottom:0}
+#content #footnotes{margin-top:-.625em;margin-bottom:0;padding:.75em 0}
+.gist .file-data>table{border:0;background:#fff;width:100%;margin-bottom:0}
+.gist .file-data>table td.line-data{width:99%}
+div.unbreakable{page-break-inside:avoid}
+.big{font-size:larger}
+.small{font-size:smaller}
+.underline{text-decoration:underline}
+.overline{text-decoration:overline}
+.line-through{text-decoration:line-through}
+.aqua{color:#00bfbf}
+.aqua-background{background:#00fafa}
+.black{color:#000}
+.black-background{background:#000}
+.blue{color:#0000bf}
+.blue-background{background:#0000fa}
+.fuchsia{color:#bf00bf}
+.fuchsia-background{background:#fa00fa}
+.gray{color:#606060}
+.gray-background{background:#7d7d7d}
+.green{color:#006000}
+.green-background{background:#007d00}
+.lime{color:#00bf00}
+.lime-background{background:#00fa00}
+.maroon{color:#600000}
+.maroon-background{background:#7d0000}
+.navy{color:#000060}
+.navy-background{background:#00007d}
+.olive{color:#606000}
+.olive-background{background:#7d7d00}
+.purple{color:#600060}
+.purple-background{background:#7d007d}
+.red{color:#bf0000}
+.red-background{background:#fa0000}
+.silver{color:#909090}
+.silver-background{background:#bcbcbc}
+.teal{color:#006060}
+.teal-background{background:#007d7d}
+.white{color:#bfbfbf}
+.white-background{background:#fafafa}
+.yellow{color:#bfbf00}
+.yellow-background{background:#fafa00}
+span.icon>.fa{cursor:default}
+a span.icon>.fa{cursor:inherit}
+.admonitionblock td.icon [class^="fa icon-"]{font-size:2.5em;text-shadow:1px 1px 2px rgba(0,0,0,.5);cursor:default}
+.admonitionblock td.icon .icon-note::before{content:"\f05a";color:#19407c}
+.admonitionblock td.icon .icon-tip::before{content:"\f0eb";text-shadow:1px 1px 2px rgba(155,155,0,.8);color:#111}
+.admonitionblock td.icon .icon-warning::before{content:"\f071";color:#bf6900}
+.admonitionblock td.icon .icon-caution::before{content:"\f06d";color:#bf3400}
+.admonitionblock td.icon .icon-important::before{content:"\f06a";color:#bf0000}
+.conum[data-value]{display:inline-block;color:#fff!important;background:rgba(0,0,0,.8);border-radius:50%;text-align:center;font-size:.75em;width:1.67em;height:1.67em;line-height:1.67em;font-family:"Open Sans","DejaVu Sans",sans-serif;font-style:normal;font-weight:bold}
+.conum[data-value] *{color:#fff!important}
+.conum[data-value]+b{display:none}
+.conum[data-value]::after{content:attr(data-value)}
+pre .conum[data-value]{position:relative;top:-.125em}
+b.conum *{color:inherit!important}
+.conum:not([data-value]):empty{display:none}
+dt,th.tableblock,td.content,div.footnote{text-rendering:optimizeLegibility}
+h1,h2,p,td.content,span.alt,summary{letter-spacing:-.01em}
+p strong,td.content strong,div.footnote strong{letter-spacing:-.005em}
+p,blockquote,dt,td.content,span.alt,summary{font-size:1.0625rem}
+p{margin-bottom:1.25rem}
+.sidebarblock p,.sidebarblock dt,.sidebarblock td.content,p.tableblock{font-size:1em}
+.exampleblock>.content{background:#fffef7;border-color:#e0e0dc;box-shadow:0 1px 4px #e0e0dc}
+.print-only{display:none!important}
+@page{margin:1.25cm .75cm}
+@media print{*{box-shadow:none!important;text-shadow:none!important}
+html{font-size:80%}
+a{color:inherit!important;text-decoration:underline!important}
+a.bare,a[href^="#"],a[href^="mailto:"]{text-decoration:none!important}
+a[href^="http:"]:not(.bare)::after,a[href^="https:"]:not(.bare)::after{content:"(" attr(href) ")";display:inline-block;font-size:.875em;padding-left:.25em}
+abbr[title]{border-bottom:1px dotted}
+abbr[title]::after{content:" (" attr(title) ")"}
+pre,blockquote,tr,img,object,svg{page-break-inside:avoid}
+thead{display:table-header-group}
+svg{max-width:100%}
+p,blockquote,dt,td.content{font-size:1em;orphans:3;widows:3}
+h2,h3,#toctitle,.sidebarblock>.content>.title{page-break-after:avoid}
+#header,#content,#footnotes,#footer{max-width:none}
+#toc,.sidebarblock,.exampleblock>.content{background:none!important}
+#toc{border-bottom:1px solid #dddddf!important;padding-bottom:0!important}
+body.book #header{text-align:center}
+body.book #header>h1:first-child{border:0!important;margin:2.5em 0 1em}
+body.book #header .details{border:0!important;display:block;padding:0!important}
+body.book #header .details span:first-child{margin-left:0!important}
+body.book #header .details br{display:block}
+body.book #header .details br+span::before{content:none!important}
+body.book #toc{border:0!important;text-align:left!important;padding:0!important;margin:0!important}
+body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-break-before:always}
+.listingblock code[data-lang]::before{display:block}
+#footer{padding:0 .9375em}
+.hide-on-print{display:none!important}
+.print-only{display:block!important}
+.hide-for-print{display:none!important}
+.show-for-print{display:inherit!important}}
+@media amzn-kf8,print{#header>h1:first-child{margin-top:1.25rem}
+.sect1{padding:0!important}
+.sect1+.sect1{border:0}
+#footer{background:none}
+#footer-text{color:rgba(0,0,0,.6);font-size:.9em}}
+@media amzn-kf8{#header,#content,#footnotes,#footer{padding:0}}
+</style>
+</head>
+<body class="article">
+<div id="header">
+<h1>Chapter 3 - Functional Components of ThreadX</h1>
+</div>
+<div id="content">
+<div id="preamble">
+<div class="sectionbody">
+<div class="paragraph">
+<p>This chapter contains a description of the high-performance ThreadX kernel from a functional perspective. Each functional component is presented in an easy-to-understand manner.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_execution_overview">Execution Overview</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>There are four types of program execution within a ThreadX application: Initialization, Thread Execution, Interrupt Service Routines (ISRs), and Application Timers.</p>
+</div>
+<div class="paragraph">
+<p>Figure 2 shows each different type of program execution. More detailed information about each of these types is found in subsequent sections of this chapter.</p>
+</div>
+<div class="sect2">
+<h3 id="_initialization">Initialization</h3>
+<div class="paragraph">
+<p>As the name implies, this is the first type of program execution in a ThreadX application. Initialization includes all program execution between processor reset and the entry point of the <em>thread scheduling loop.</em></p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_thread_execution">Thread Execution</h3>
+<div class="paragraph">
+<p>After initialization is complete, ThreadX enters its thread scheduling loop. The scheduling loop looks for an application thread ready for execution. When a ready thread is found, ThreadX transfers control to it. After the thread is finished (or another higher-priority thread becomes ready), execution transfers back to the thread scheduling loop to find the next highest priority ready thread.</p>
+</div>
+<div class="paragraph">
+<p>This process of continually executing and scheduling threads is the most common type of program execution in ThreadX applications.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_interrupt_service_routines_isr">Interrupt Service Routines (ISR)</h3>
+<div class="paragraph">
+<p>Interrupts are the cornerstone of real-time systems. Without interrupts it would be extremely difficult to respond to changes in the external world in a timely manner. On detection of an interrupt, the processor saves key information about the current program execution (usually on the stack), then transfers control to a predefined program area. This predefined program area is commonly called an Interrupt Service Routine. In most cases, interrupts occur during thread execution (or in the thread scheduling loop). However, interrupts may also occur inside of an executing ISR or an Application Timer.</p>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="./media/user-guide/types-program-execution.png" alt="Types of Program Execution">
+</div>
+</div>
+<div class="paragraph">
+<p><strong>FIGURE 2. Types of Program Execution</strong></p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_application_timers">Application Timers</h3>
+<div class="paragraph">
+<p>Application Timers are similar to ISRs, except the hardware implementation (usually a single periodic hardware interrupt is used) is hidden from the application. Such timers are used by
+applications to perform time-outs, periodics, and/or watchdog services. Just like ISRs, Application Timers most often interrupt thread execution. Unlike ISRs, however, Application Timers cannot interrupt each other.</p>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_memory_usage">Memory Usage</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>ThreadX resides along with the application program. As a result, the static memory (or fixed memory) usage of ThreadX is determined by the development tools; e.g., the
+compiler, linker, and locator. Dynamic memory (or run-time memory) usage is under direct control of the application.</p>
+</div>
+<div class="sect2">
+<h3 id="_static_memory_usage">Static Memory Usage</h3>
+<div class="paragraph">
+<p>Most of the development tools divide the application program image into five basic areas: <em>instruction</em>, <em>constant</em>, <em>initialized data</em>, <em>uninitialized data</em>, and <em>system
+stack</em>. Figure 3 shows an example of these memory areas.</p>
+</div>
+<div class="paragraph">
+<p>It is important to understand that this is only an example. The actual static memory layout is specific to the processor, development tools, and the underlying hardware.</p>
+</div>
+<div class="paragraph">
+<p>The instruction area contains all of the program&#8217;s processor instructions. This area is typically the largest and is often located in ROM.</p>
+</div>
+<div class="paragraph">
+<p>The constant area contains various compiled constants, including strings defined or referenced within the program. In addition, this area contains the "initial copy" of the initialized data area. During the <em>Memory Usage</em> compiler&#8217;s initialization process, this portion of the constant area is used to set up the initialized data area in RAM. The constant area usually follows the instruction area and is often located in ROM.</p>
+</div>
+<div class="paragraph">
+<p>The initialized data and uninitialized data areas contain all of the global and static variables. These areas are always located in RAM.</p>
+</div>
+<div class="paragraph">
+<p>The system stack is generally set up immediately following the initialized and uninitialized data areas.</p>
+</div>
+<div class="paragraph">
+<p>The system stack is used by the compiler during initialization, then by ThreadX during initialization and, subsequently, in ISR processing.</p>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="./media/user-guide/memory-area-example.png" alt="Memory Area Example">
+</div>
+</div>
+<div class="paragraph">
+<p><strong>FIGURE 3. Memory Area Example</strong></p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_dynamic_memory_usage">Dynamic Memory Usage</h3>
+<div class="paragraph">
+<p>As mentioned before, dynamic memory usage is under direct control of the application. Control blocks and memory areas associated with stacks, queues, and memory pools can be placed anywhere in the target&#8217;s memory space. This is an important feature because it facilitates easy utilization of different types of physical memory.</p>
+</div>
+<div class="paragraph">
+<p>For example, suppose a target hardware environment has both fast memory and slow memory. If the application needs extra performance for a high-priority thread, its control block
+(TX_THREAD) and stack can be placed in the fast memory area, which may greatly enhance its performance.</p>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_initialization_2">Initialization</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Understanding the initialization process is important. The initial hardware environment is set up here. In addition, this is where the application is given its initial personality.</p>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<div class="title">Note</div>
+</td>
+<td class="content">
+<em>ThreadX attempts to utilize (whenever possible) the complete development tool&#8217;s initialization process. This makes it easier to upgrade to new versions of the development tools in the future.</em>
+</td>
+</tr>
+</table>
+</div>
+<div class="sect2">
+<h3 id="_system_reset_vector">System Reset Vector</h3>
+<div class="paragraph">
+<p>All microprocessors have reset logic. When a reset occurs (either hardware or software), the address of the application&#8217;s entry point is retrieved from a specific memory location. After the entry point is retrieved, the processor transfers control to that location. The application entry point is quite often written in the native assembly language and is usually supplied by the development tools (at least in template form). In some cases, a special version of the entry program is supplied with ThreadX.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_development_tool_initialization">Development Tool Initialization</h3>
+<div class="paragraph">
+<p>After the low-level initialization is complete, control transfers to the development tool&#8217;s high-level initialization. This is usually the place where initialized global and static C variables are set up. Remember their initial values are retrieved from the constant area. Exact initialization processing is development tool specific.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_main_function">main Function</h3>
+<div class="paragraph">
+<p>When the development tool initialization is complete, control transfers to the user-supplied <em>main</em> function. At this point, the application controls what happens next. For most applications, the main function simply calls <em>tx_kernel_enter</em>, which is the entry into ThreadX. However, applications can perform preliminary processing (usually for hardware initialization) prior to entering ThreadX.</p>
+</div>
+<div class="admonitionblock important">
+<table>
+<tr>
+<td class="icon">
+<div class="title">Important</div>
+</td>
+<td class="content">
+<em>The call to tx_kernel_enter does not return, so do not place any processing after it.</em>
+</td>
+</tr>
+</table>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_tx_kernel_enter">tx_kernel_enter</h3>
+<div class="paragraph">
+<p>The entry function coordinates initialization of various internal ThreadX data structures and then calls the application&#8217;s definition function <strong><em>tx_application_define</em></strong>.</p>
+</div>
+<div class="paragraph">
+<p>When <strong><em>tx_application_define</em></strong> returns, control is transferred to the thread scheduling loop. This marks the end of initialization.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_application_definition_function">Application Definition Function</h3>
+<div class="paragraph">
+<p>The <strong><em>tx_application_define</em></strong> function defines all of the initial application threads, queues, semaphores, mutexes, event flags, memory pools, and timers. It is also possible to create and delete system resources from threads during the normal operation of the application. However, all initial application resources are defined here.</p>
+</div>
+<div class="paragraph">
+<p>The <strong><em>tx_application_define</em></strong> function has a single input parameter and it is certainly worth mentioning. The <em>first-available</em> RAM address is the sole input parameter to this function. It is typically used as a starting point for initial run-time memory allocations of thread stacks, queues, and memory pools.</p>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<div class="title">Note</div>
+</td>
+<td class="content">
+<em>After initialization is complete, only an executing thread can create and delete system resources-- including other threads. Therefore, at least one thread must be created during initialization.</em>
+</td>
+</tr>
+</table>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_interrupts">Interrupts</h3>
+<div class="paragraph">
+<p>Interrupts are left disabled during the entire initialization process. If the application somehow enables interrupts, unpredictable behavior may occur. Figure 4 shows the entire
+initialization process, from system reset through application-specific initialization.</p>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_thread_execution_2">Thread Execution</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Scheduling and executing application threads is the most important activity of ThreadX. A thread is typically defined as a semi-independent program segment with a dedicated purpose. The
+combined processing of all threads makes an application.</p>
+</div>
+<div class="paragraph">
+<p>Threads are created dynamically by calling <strong><em>tx_thread_create</em></strong> during initialization or during thread execution. Threads are created in either a <em>ready</em> or <em>suspended</em> state.</p>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="./media/user-guide/initialization-process.png" alt="Initialization Process">
+</div>
+</div>
+<div class="paragraph">
+<p><strong>FIGURE 4. Initialization Process</strong></p>
+</div>
+<div class="sect2">
+<h3 id="_thread_execution_states">Thread Execution States</h3>
+<div class="paragraph">
+<p>Understanding the different processing states of threads is a key ingredient to understanding the entire multithreaded environment. In ThreadX there are five distinct thread states:
+<em>ready</em>, <em>suspended</em>, <em>executing</em>, <em>terminated</em>, and <em>completed</em>. Figure 5 shows the thread state transition diagram for ThreadX.</p>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="./media/user-guide/thread-state-transition.png" alt="Thread State Transition">
+</div>
+</div>
+<div class="paragraph">
+<p><strong>FIGURE 5. Thread State Transition</strong></p>
+</div>
+<div class="paragraph">
+<p>A thread is in a <em>ready</em> state when it is ready for execution. A ready thread is not executed until it is the highest priority thread in ready state. When this happens, ThreadX executes the thread, which then changes its state to <em>executing</em>.</p>
+</div>
+<div class="paragraph">
+<p>If a higher-priority thread becomes ready, the executing thread reverts back to a <em>ready</em> state. The newly ready high-priority thread is then executed, which changes its logical state to <em>executing</em>. This transition between <em>ready</em> and <em>executing</em> states occurs every time thread preemption occurs.</p>
+</div>
+<div class="paragraph">
+<p>At any given moment, only one thread is in an <em>executing</em> state. This is because a thread in the <em>executing</em> state has control of the underlying processor.</p>
+</div>
+<div class="paragraph">
+<p>Threads in a <em>suspended</em> state are not eligible for execution. Reasons for being in a <em>suspended</em> state include suspension for time, queue messages, semaphores, mutexes, event flags, memory, and basic thread suspension. After the cause for suspension is removed, the thread is placed back in a <em>ready</em> state.</p>
+</div>
+<div class="paragraph">
+<p>A thread in a <em>completed</em> state is a thread that has completed its processing and returned from its entry function. The entry function is specified during thread creation. A thread in a <em>completed</em> state cannot execute again.</p>
+</div>
+<div class="paragraph">
+<p>A thread is in a <em>terminated</em> state because another thread or the thread itself called the <em>tx_thread_terminate</em> service. A thread in a <em>terminated</em> state cannot execute again.</p>
+</div>
+<div class="admonitionblock important">
+<table>
+<tr>
+<td class="icon">
+<div class="title">Important</div>
+</td>
+<td class="content">
+<em>If re-starting a completed or terminated thread is desired, the application must first delete the thread. It can then be re-created and re-started.</em>
+</td>
+</tr>
+</table>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_thread_entryexit_notification">Thread Entry/Exit Notification</h3>
+<div class="paragraph">
+<p>Some applications may find it advantageous to be notified when a specific thread is entered for the first time, when it completes, or is terminated. ThreadX provides this ability through the <strong><em>tx_thread_entry_exit_notify</em></strong> service. This service registers an application notification function for a specific thread, which is called by ThreadX whenever the thread starts running, completes, or is terminated. After being invoked, the application notification function can perform the application-specific processing. This typically involves informing another application thread of the event via a ThreadX synchronization primitive.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_thread_priorities">Thread Priorities</h3>
+<div class="paragraph">
+<p>As mentioned before, a thread is a semi-independent program segment with a dedicated purpose. However, all threads are not created equal! The dedicated purpose of some threads is much more important than others. This heterogeneous type of thread importance is a hallmark of embedded realtime applications.</p>
+</div>
+<div class="paragraph">
+<p>ThreadX determines a thread&#8217;s importance when the thread is created by assigning a numerical value representing its <em>priority</em>. The maximum number of ThreadX priorities is configurable from 32 through 1024 in increments of 32. The actual maximum number of priorities is determined by the <strong>TX_MAX_PRIORITIES</strong> constant during compilation of the ThreadX library. Having a larger number of priorities does not significantly increase processing overhead. However, for each group of 32 priority levels an additional 128 bytes of RAM is required to manage them. For example, 32 priority levels require 128 bytes of RAM, 64 priority levels require 256 bytes of RAM, and 96 priority levels requires 384 bytes of RAM.</p>
+</div>
+<div class="paragraph">
+<p>By default, ThreadX has 32 priority levels, ranging from priority 0 through priority 31. Numerically smaller values imply higher priority. Hence, priority 0 represents the highest priority, while priority (<strong>TX_MAX_PRIORITIES</strong>-1) represents the lowest priority.</p>
+</div>
+<div class="paragraph">
+<p>Multiple threads can have the same priority relying on cooperative scheduling or time-slicing. In addition, thread priorities can be changed during run-time.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_thread_scheduling">Thread Scheduling</h3>
+<div class="paragraph">
+<p>ThreadX schedules threads based on their priority. The ready thread with the highest priority is executed first. If multiple threads of the same priority are ready, they are executed in a <em>first-in-first-out</em> (FIFO) manner.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_round_robin_scheduling">Round-robin Scheduling</h3>
+<div class="paragraph">
+<p>ThreadX supports <em>round-robin</em> scheduling of multiple threads having the same priority. This is accomplished through cooperative calls to <strong><em>tx_thread_relinquish</em></strong>. This service gives all other ready threads of the same priority a chance to execute before the <strong><em>tx_thread_relinquish</em></strong> caller executes again.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_time_slicing">Time-Slicing</h3>
+<div class="paragraph">
+<p><em>Time-slicing</em> is another form of round-robin scheduling. A time-slice specifies the maximum number of timer ticks (timer interrupts) that a thread can execute without giving up the
+processor. In ThreadX, time-slicing is available on a per-thread basis. The thread&#8217;s time-slice is assigned during creation and can be modified during run-time. When a time-slice expires, all other ready threads of the same priority level are given a chance to execute before the time-sliced thread executes again.</p>
+</div>
+<div class="paragraph">
+<p>A fresh thread time-slice is given to a thread after it suspends, relinquishes, makes a ThreadX service call that causes preemption, or is itself time-sliced.</p>
+</div>
+<div class="paragraph">
+<p>When a time-sliced thread is preempted, it will resume before other ready threads of equal priority for the remainder of its time-slice.</p>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<div class="title">Note</div>
+</td>
+<td class="content">
+<em>Using time-slicing results in a slight amount of system overhead. Because time-slicing is only useful in cases in which multiple threads share the same priority, threads having a unique priority should not be assigned a time-slice.</em>
+</td>
+</tr>
+</table>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_preemption">Preemption</h3>
+<div class="paragraph">
+<p>Preemption is the process of temporarily interrupting an executing thread in favor of a higher-priority thread. This process is invisible to the executing thread. When the higher-priority thread is finished, control is transferred back to the exact place where the preemption took place. This is a very important feature in real-time systems because it facilitates fast response to important application events. Although a very important feature, preemption can also be a source of a variety of problems, including starvation, excessive overhead, and priority inversion.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_preemption_threshold">Preemption Threshold</h3>
+<div class="paragraph">
+<p>To ease some of the inherent problems of preemption, ThreadX provides a unique and advanced feature called <em>preemption-threshold</em>.</p>
+</div>
+<div class="paragraph">
+<p>A preemption-threshold allows a thread to specify a priority <em>ceiling</em> for disabling preemption. Threads that have higher priorities than the ceiling are still allowed to preempt, while those less than the ceiling are not allowed to preempt.</p>
+</div>
+<div class="paragraph">
+<p>For example, suppose a thread of priority 20 only interacts with a group of threads that have priorities between 15 and 20. During its critical sections, the thread of priority 20 can set its preemption-threshold to 15, thereby preventing preemption from all of the threads that it interacts with. This still permits really important threads (priorities between 0 and 14) to preempt this thread during its critical section processing, which results in much more responsive processing.</p>
+</div>
+<div class="paragraph">
+<p>Of course, it is still possible for a thread to disable all preemption by setting its preemption-threshold to 0. In addition, preemption-threshold can be changed during run-time.</p>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<div class="title">Note</div>
+</td>
+<td class="content">
+<em>Using preemption-threshold disables time-slicing for the specified thread.</em>
+</td>
+</tr>
+</table>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_priority_inheritance">Priority Inheritance</h3>
+<div class="paragraph">
+<p>ThreadX also supports optional priority inheritance within its mutex services described later in this chapter. Priority inheritance allows a lower priority thread to temporarily assume the priority of a high priority thread that is waiting for a mutex owned by the lower priority thread. This capability helps the application to avoid nondeterministic priority inversion by eliminating preemption of intermediate thread priorities. Of course, <em>preemption-threshold</em> may be used to achieve a similar result.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_thread_creation">Thread Creation</h3>
+<div class="paragraph">
+<p>Application threads are created during initialization or during the execution of other application threads. There is no limit on the number of threads that can be created by an application.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_thread_control_block_tx_thread">Thread Control Block TX_THREAD</h3>
+<div class="paragraph">
+<p>The characteristics of each thread are contained in its control block. This structure is defined in the <strong><em>tx_api.h</em></strong> file.</p>
+</div>
+<div class="paragraph">
+<p>A thread&#8217;s control block can be located anywhere in memory, but it is most common to make the control block a global structure by defining it outside the scope of any function.</p>
+</div>
+<div class="paragraph">
+<p>Locating the control block in other areas requires a bit more care, just like all dynamically-allocated memory. If a control block is allocated within a C function, the memory associated with it is part of the calling thread&#8217;s stack. In general, avoid using local storage for control blocks because after the function returns, all of its local variable stack space is released&#8212;&#8203;regardless of whether another thread is using it for a control block.</p>
+</div>
+<div class="paragraph">
+<p>In most cases, the application is oblivious to the contents of the thread&#8217;s control block. However, there are some situations, especially during debug, in which looking at certain members is useful. The following are some of the more useful control block members.</p>
+</div>
+<div class="paragraph">
+<p><strong>tx_thread_run_count</strong> contains a counter of the number of many times the thread has been scheduled. An increasing counter indicates the thread is being scheduled and executed.</p>
+</div>
+<div class="paragraph">
+<p><strong>tx_thread_state</strong> contains the state of the associated thread. The following lists the possible thread states.</p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 50%;">
+<col style="width: 50%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Thread state</th>
+<th class="tableblock halign-left valign-top">Value</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">TX_READY</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">(0x00)</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">TX_COMPLETED</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">(0x01)</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">TX_TERMINATED</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">(0x02)</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">TX_SUSPENDED</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">(0x03)</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">TX_SLEEP</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">(0x04)</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">TX_QUEUE_SUSP</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">(0x05)</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">TX_SEMAPHORE_SUSP</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">(0x06)</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">TX_EVENT_FLAG</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">(0x07)</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">TX_BLOCK_MEMORY</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">(0x08)</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">TX_BYTE_MEMORY</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">(0x09)</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">TX_MUTEX_SUSP</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">(0x0D)</p></td>
+</tr>
+</tbody>
+</table>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<div class="title">Note</div>
+</td>
+<td class="content">
+<em>Of course there are many other interesting fields in the thread control block, including the stack pointer, time-slice value, priorities, etc. Users are welcome to review control block members, but modifications are strictly prohibited!</em>
+</td>
+</tr>
+</table>
+</div>
+<div class="admonitionblock important">
+<table>
+<tr>
+<td class="icon">
+<div class="title">Important</div>
+</td>
+<td class="content">
+<em>There is no equate for the "executing" state mentioned earlier in this section. It is not necessary because there is only one executing thread at a given time. The state of an executing thread is also</em> <strong>TX_READY</strong>.
+</td>
+</tr>
+</table>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_currently_executing_thread">Currently Executing Thread</h3>
+<div class="paragraph">
+<p>As mentioned before, there is only one thread executing at any given time. There are several ways to identify the executing thread, depending on which thread is making the request.
+A program segment can get the control block address of the executing thread by calling <strong><em>tx_thread_identify</em></strong>. This is useful in shared portions of application code that are executed from multiple threads.</p>
+</div>
+<div class="paragraph">
+<p>In debug sessions, users can examine the internal ThreadX pointer <strong><em>_tx_thread_current_ptr</em></strong>. It contains the control block address of the currently executing thread. If this pointer is NULL, no application thread is executing; i.e., ThreadX is waiting in its scheduling loop for a thread to become ready.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_thread_stack_area">Thread Stack Area</h3>
+<div class="paragraph">
+<p>Each thread must have its own stack for saving the context of its last execution and compiler use. Most C compilers use the stack for making function calls and for temporarily allocating local variables. Figure 6 shows a typical thread&#8217;s stack.</p>
+</div>
+<div class="paragraph">
+<p>Where a thread stack is located in memory is up to the application. The stack area is specified during thread creation and can be located anywhere in the target&#8217;s address space. This is an important feature because it allows applications to improve performance of important threads by placing their stack in high-speed RAM.</p>
+</div>
+<div class="paragraph">
+<p><strong>Stack Memory Area</strong> (example)</p>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="./media/user-guide/typical-thread-stack.png" alt="Typical Thread Stack">
+</div>
+</div>
+<div class="paragraph">
+<p><strong>FIGURE 6. Typical Thread Stack</strong></p>
+</div>
+<div class="paragraph">
+<p>How big a stack should be is one of the most frequently asked questions about threads. A thread&#8217;s stack area must be large enough to accommodate worst-case function call nesting, local variable allocation, and saving its last execution context.</p>
+</div>
+<div class="paragraph">
+<p>The minimum stack size, <strong>TX_MINIMUM_STACK</strong>, is defined by ThreadX. A stack of this size supports saving a thread&#8217;s context and minimum amount of function calls and local variable allocation.</p>
+</div>
+<div class="paragraph">
+<p>For most threads, however, the minimum stack size is too small, and the user must ascertain the worst-case size requirement by examining function-call nesting and local variable allocation. Of course, it is always better to start with a larger stack area.</p>
+</div>
+<div class="paragraph">
+<p>After the application is debugged, it is possible to tune the thread stack sizes if memory is scarce. A favorite trick is to preset all stack areas with an easily identifiable data pattern like (0xEFEF) prior to creating the threads. After the application has been thoroughly put through its paces, the stack areas can be examined to see how much stack was actually used by finding the area of the stack where the data pattern is still intact. Figure 7 shows a stack preset to 0xEFEF after thorough thread execution.</p>
+</div>
+<div class="paragraph">
+<p><strong>Stack Memory Area</strong> (another example)</p>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="./media/user-guide/stack-preset.png" alt="Stack Preset to 0xEFEF*">
+</div>
+</div>
+<div class="paragraph">
+<p><strong>FIGURE 7. Stack Preset to 0xEFEF</strong></p>
+</div>
+<div class="admonitionblock important">
+<table>
+<tr>
+<td class="icon">
+<div class="title">Important</div>
+</td>
+<td class="content">
+<em>By default, ThreadX initializes every byte of each thread stack with a value of 0xEF.</em>
+</td>
+</tr>
+</table>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_memory_pitfalls">Memory Pitfalls</h3>
+<div class="paragraph">
+<p>The stack requirements for threads can be large. Therefore, it is important to design the application to have a reasonable number of threads. Furthermore, some care must be taken to avoid excessive stack usage within threads. Recursive algorithms and large local data structures should be avoided.</p>
+</div>
+<div class="paragraph">
+<p>In most cases, an overflowed stack causes thread execution to corrupt memory adjacent (usually before) its stack area. The results are unpredictable, but most often result in an unnatural change in the program counter. This is often called "jumping into the weeds." Of course, the only way to prevent this is to ensure all thread stacks are large enough.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_optional_run_time_stack_checking">Optional Run-time Stack Checking</h3>
+<div class="paragraph">
+<p>ThreadX provides the ability to check each thread&#8217;s stack for corruption during run-time. By default, ThreadX fills every byte of thread stacks with a 0xEF data pattern during creation. If the application builds the ThreadX library with <strong>TX_ENABLE_STACK_CHECKING</strong> defined, ThreadX will examine each thread&#8217;s stack for corruption as it is suspended or resumed. If stack corruption is detected, ThreadX will call the application&#8217;s stack error handling routine as specified by the call to <strong><em>tx_thread_stack_error_notify</em></strong>. Otherwise, if no stack error handler was specified, ThreadX will call the internal <strong><em>_tx_thread_stack_error_handler</em></strong> routine.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_reentrancy">Reentrancy</h3>
+<div class="paragraph">
+<p>One of the real beauties of multithreading is that the same C function can be called from multiple threads. This provides great power and also helps reduce code space. However, it does require that C functions called from multiple threads are <em>reentrant</em>.</p>
+</div>
+<div class="paragraph">
+<p>Basically, a reentrant function stores the caller&#8217;s return address on the current stack and does not rely on global or static C variables that it previously set up. Most compilers place the return address on the stack. Hence, application developers must only worry about the use of <em>globals</em> and <em>statics</em>.</p>
+</div>
+<div class="paragraph">
+<p>An example of a non-reentrant function is the string token function <strong><em>strtok</em></strong> found in the standard C library. This function "remembers" the previous string pointer on subsequent calls. It does this with a static string pointer. If this function is called from multiple threads, it would most likely return an invalid pointer.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_thread_priority_pitfalls">Thread Priority Pitfalls</h3>
+<div class="paragraph">
+<p>Selecting thread priorities is one of the most important aspects of multithreading. It is sometimes very tempting to assign priorities based on a perceived notion of thread importance rather than determining what is exactly required during run-time. Misuse of thread priorities can starve other threads, create priority inversion, reduce processing bandwidth, and make the application&#8217;s run-time behavior difficult to understand.</p>
+</div>
+<div class="paragraph">
+<p>As mentioned before, ThreadX provides a priority-based, preemptive scheduling algorithm. Lower priority threads do not execute until there are no higher priority threads ready for execution. If a higher priority thread is always ready, the lower priority threads never execute. This condition is called <em>thread starvation</em>.</p>
+</div>
+<div class="paragraph">
+<p>Most thread starvation problems are detected early in debug and can be solved by ensuring that higher priority threads don&#8217;t execute continuously. Alternatively, logic can be added to the application that gradually raises the priority of starved threads until they get a chance to execute.</p>
+</div>
+<div class="paragraph">
+<p>Another pitfall associated with thread priorities is <em>priority inversion</em>. Priority inversion takes place when a higher priority thread is suspended because a lower priority thread has a needed resource. Of course, in some instances it is necessary for two threads of different priority to share a common resource. If these threads are the only ones active, the priority inversion time is bounded by the time the lower priority thread holds the resource. This condition is both deterministic and quite normal. However, if threads of
+intermediate priority become active during this priority inversion condition, the priority inversion time is no longer deterministic and could cause an application failure.</p>
+</div>
+<div class="paragraph">
+<p>There are principally three distinct methods of preventing nondeterministic priority inversion in ThreadX. First, the application priority selections and run-time behavior can be designed in a manner that prevents the priority inversion problem. Second, lower priority threads can utilize <em>preemption threshold</em> to block preemption from intermediate threads
+while they share resources with higher priority threads. Finally, threads using ThreadX mutex objects to protect system resources may utilize the optional mutex <em>priority inheritance</em> to eliminate nondeterministic priority inversion.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_priority_overhead">Priority Overhead</h3>
+<div class="paragraph">
+<p>One of the most overlooked ways to reduce overhead in multithreading is to reduce the number of context switches. As previously mentioned, a context switch occurs when execution of a higher priority thread is favored over that of the executing thread. It is worthwhile to mention that higher priority threads can become ready as a result of both external events (like
+interrupts) and from service calls made by the executing thread.</p>
+</div>
+<div class="paragraph">
+<p>To illustrate the effects thread priorities have on context switch overhead, assume a three thread environment with threads named <em>thread_1</em>, <em>thread_2</em>, and <em>thread_3</em>. Assume further that all of the threads are in a state of suspension waiting for a message. When thread_1 receives a message, it immediately forwards it to thread_2. Thread_2 then forwards the message to thread_3. Thread_3 just discards the message. After each thread processes its message, it goes back and waits for another message.</p>
+</div>
+<div class="paragraph">
+<p>The processing required to execute these three threads varies greatly depending on their priorities. If all of the threads have the same priority, a single context switch occurs before the execution of each thread. The context switch occurs when each thread suspends on an empty message queue.</p>
+</div>
+<div class="paragraph">
+<p>However, if thread_2 is higher priority than thread_1 and thread_3 is higher priority than thread_2, the number of context switches doubles. This is because another context switch occurs inside of the <em>tx_queue_send</em> service when it detects that a higher priority thread is now ready.</p>
+</div>
+<div class="paragraph">
+<p>The ThreadX preemption-threshold mechanism can avoid these extra context switches and still allow the previously mentioned priority selections. This is an important feature because it allows several thread priorities during scheduling, while at the same time eliminating some of the unwanted context switching between them during thread execution.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_run_time_thread_performance_information">Run-time Thread Performance Information</h3>
+<div class="paragraph">
+<p>ThreadX provides optional run-time thread performance information. If the ThreadX library and application is built with <strong>TX_THREAD_ENABLE_PERFORMANCE_INFO</strong> defined, ThreadX accumulates the following information.</p>
+</div>
+<div class="paragraph">
+<p>Total number for the overall system:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>thread resumptions</p>
+</li>
+<li>
+<p>thread suspensions</p>
+</li>
+<li>
+<p>service call preemptions</p>
+</li>
+<li>
+<p>interrupt preemptions</p>
+</li>
+<li>
+<p>priority inversions</p>
+</li>
+<li>
+<p>time-slices</p>
+</li>
+<li>
+<p>relinquishes</p>
+</li>
+<li>
+<p>thread timeouts</p>
+</li>
+<li>
+<p>suspension aborts</p>
+</li>
+<li>
+<p>idle system returns</p>
+</li>
+<li>
+<p>non-idle system returns</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>Total number for each thread:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>resumptions</p>
+</li>
+<li>
+<p>suspensions</p>
+</li>
+<li>
+<p>service call preemptions</p>
+</li>
+<li>
+<p>interrupt preemptions</p>
+</li>
+<li>
+<p>priority inversions</p>
+</li>
+<li>
+<p>time-slices</p>
+</li>
+<li>
+<p>thread relinquishes</p>
+</li>
+<li>
+<p>thread timeouts</p>
+</li>
+<li>
+<p>suspension aborts</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>This information is available at run-time through the services <strong><em>tx_thread_performance_info_get</em></strong> and <strong><em>tx_thread_performance_system_info_get</em></strong>. Thread performance information is useful in determining if the application is behaving properly. It is also useful in optimizing the application. For example, a relatively high number of service call preemptions might
+suggest the thread&#8217;s priority and/or preemption-threshold is too low. Furthermore, a relatively low number of idle system returns might suggest that lower priority threads are not suspending enough.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_debugging_pitfalls">Debugging Pitfalls</h3>
+<div class="paragraph">
+<p>Debugging multithreaded applications is a little more difficult because the same program code can be executed from multiple threads. In such cases, a break-point alone may not be enough. The debugger must also view the current thread pointer <strong>_tx_thread_current_ptr</strong> using a conditional breakpoint to see if the calling thread is the one to debug.</p>
+</div>
+<div class="paragraph">
+<p>Much of this is being handled in multithreading support packages offered through various development tool vendors. Because of its simple design, integrating ThreadX with different development tools is relatively easy.</p>
+</div>
+<div class="paragraph">
+<p>Stack size is always an important debug topic in multithreading. Whenever unexplained behavior is observed, it is usually a good first guess to increase stack sizes for all threads&#8212;&#8203;especially the stack size of the last thread to execute!</p>
+</div>
+<div class="admonitionblock tip">
+<table>
+<tr>
+<td class="icon">
+<div class="title">Tip</div>
+</td>
+<td class="content">
+<em>It is also a good idea to build the ThreadX library with <strong>TX_ENABLE_STACK_CHECKING</strong> defined. This will help isolate stack corruption problems as early in the processing as possible.</em>
+</td>
+</tr>
+</table>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_message_queues">Message Queues</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Message queues are the primary means of inter-thread communication in ThreadX. One or more messages can reside in a message queue. A message queue that holds a single message is commonly called a <em>mailbox</em>.</p>
+</div>
+<div class="paragraph">
+<p>Messages are copied to a queue by <strong><em>tx_queue_send</em></strong> and are copied from a queue by <strong><em>tx_queue_receive</em></strong>. The only exception to this is when a thread is suspended while waiting for a message on an empty queue. In this case, the next message sent to the queue is placed directly into the thread&#8217;s destination area.</p>
+</div>
+<div class="paragraph">
+<p>Each message queue is a public resource. ThreadX places no constraints on how message queues are used.</p>
+</div>
+<div class="sect2">
+<h3 id="_creating_message_queues">Creating Message Queues</h3>
+<div class="paragraph">
+<p>Message queues are created either during initialization or during run-time by application threads. There is no limit on the number of message queues in an application.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_message_size">Message Size</h3>
+<div class="paragraph">
+<p>Each message queue supports a number of fixed-sized messages. The available message sizes are 1 through 16 32-bit words inclusive. The message size is specified when the queue is created. Application messages greater than 16 words must be passed by pointer. This is accomplished by creating a queue with a message size of 1 word (enough to hold a pointer) and then sending and receiving message pointers instead of the entire message.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_message_queue_capacity">Message Queue Capacity</h3>
+<div class="paragraph">
+<p>The number of messages a queue can hold is a function of its message size and the size of the memory area supplied during creation. The total message capacity of the queue is calculated by dividing the number of bytes in each message into the total number of bytes in the supplied memory area.</p>
+</div>
+<div class="paragraph">
+<p>For example, if a message queue that supports a message size of 1 32-bit word (4 bytes) is created with a 100-byte memory area, its capacity is 25 messages.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_queue_memory_area">Queue Memory Area</h3>
+<div class="paragraph">
+<p>As mentioned previously, the memory area for buffering messages is specified during queue creation. Like other memory areas in ThreadX, it can be located anywhere in the target&#8217;s address space.</p>
+</div>
+<div class="paragraph">
+<p>This is an important feature because it gives the application considerable flexibility. For example, an application might locate the memory area of an important queue in high-speed RAM to improve performance.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_thread_suspension">Thread Suspension</h3>
+<div class="paragraph">
+<p>Application threads can suspend while attempting to send or receive a message from a queue. Typically, thread suspension involves waiting for a message from an empty queue. However, it is also possible for a thread to suspend trying to send a message to a full queue.</p>
+</div>
+<div class="paragraph">
+<p>After the condition for suspension is resolved, the service requested is completed and the waiting thread is resumed. If multiple threads are suspended on the same queue, they are resumed in the order they were suspended (FIFO).</p>
+</div>
+<div class="paragraph">
+<p>However, priority resumption is also possible if the application calls <strong><em>tx_queue_prioritize</em></strong> prior to the queue service that lifts thread suspension. The queue prioritize service places the highest priority thread at the front of the suspension list, while leaving all other suspended threads in the same FIFO order.</p>
+</div>
+<div class="paragraph">
+<p>Time-outs are also available for all queue suspensions. Basically, a time-out specifies the maximum number of timer ticks the thread will stay suspended. If a time-out occurs, the thread is resumed and the service returns with the appropriate error code.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_queue_send_notification">Queue Send Notification</h3>
+<div class="paragraph">
+<p>Some applications may find it advantageous to be notified whenever a message is placed on a queue. ThreadX provides this ability through the <strong><em>tx_queue_send_notify</em></strong> service. This service registers the supplied application notification function with the specified queue. ThreadX will subsequently invoke this application notification function whenever a message is sent to the queue. The exact processing within the application notification function is determined by the application; however, it typically consists of resuming the appropriate thread for processing the new message.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_queue_event_chaining">Queue Event chaining</h3>
+<div class="paragraph">
+<p>The notification capabilities in ThreadX can be used to chain various synchronization events together. This is typically useful when a single thread must process multiple synchronization events.</p>
+</div>
+<div class="paragraph">
+<p>For example, suppose a single thread is responsible for processing messages from five different queues and must also suspend when no messages are available. This is easily accomplished by registering an application notification function for each queue and introducing an additional counting semaphore. Specifically, the application notification function performs a <em>tx_semaphore_put</em> whenever it is called (the semaphore count represents the total number of messages in all five queues). The processing thread suspends on this semaphore via the
+<em>tx_semaphore_get</em> service. When the semaphore is available (in this case, when a message is available!), the processing thread is resumed. It then interrogates each queue for a message, processes the found message, and performs another <strong><em>tx_semaphore_get</em></strong> to wait for the next message. Accomplishing this without event-chaining is quite difficult and likely would require more threads and/or additional application code.</p>
+</div>
+<div class="paragraph">
+<p>In general, <em>event-chaining</em> results in fewer threads, less overhead, and smaller RAM requirements. It also provides a highly flexible mechanism to handle synchronization requirements of more complex systems.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_run_time_queue_performance_information">Run-time Queue Performance Information</h3>
+<div class="paragraph">
+<p>ThreadX provides optional run-time queue performance information. If the ThreadX library and application is built with
+<strong><em>TX_QUEUE_ENABLE_PERFORMANCE_INFO</em></strong> defined, ThreadX accumulates the following information.</p>
+</div>
+<div class="paragraph">
+<p>Total number for the overall system:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>messages sent</p>
+</li>
+<li>
+<p>messages received</p>
+</li>
+<li>
+<p>queue empty suspensions</p>
+</li>
+<li>
+<p>queue full suspensions</p>
+</li>
+<li>
+<p>queue full error returns (suspension not specified)</p>
+</li>
+<li>
+<p>queue timeouts</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>Total number for each queue:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>messages sent</p>
+</li>
+<li>
+<p>messages received</p>
+</li>
+<li>
+<p>queue empty suspensions</p>
+</li>
+<li>
+<p>queue full suspensions</p>
+</li>
+<li>
+<p>queue full error returns (suspension not specified)</p>
+</li>
+<li>
+<p>queue timeouts</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>This information is available at run-time through the services <strong><em>tx_queue_performance_info_get</em></strong> and <strong><em>tx_queue_performance_system_info_get</em></strong>. Queue performance
+information is useful in determining if the application is behaving properly. It is also useful in optimizing the application. For example, a relatively high number of "queue full suspensions" suggests an increase in the queue size might be beneficial.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_queue_control_block_tx_queue">Queue Control Block TX_QUEUE</h3>
+<div class="paragraph">
+<p>The characteristics of each message queue are found in its control block. It contains interesting information such as the number of messages in the queue. This structure is defined in the <strong><em>tx_api.h</em></strong> file.</p>
+</div>
+<div class="paragraph">
+<p>Message queue control blocks can also be located anywhere in memory, but it is most common to make the control block a global structure by defining it outside the scope of any function.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_message_destination_pitfall">Message Destination Pitfall</h3>
+<div class="paragraph">
+<p>As mentioned previously, messages are copied between the queue area and application data areas. It is important to ensure the destination for a received message is large enough to hold the entire message. If not, the memory following the message destination will likely be corrupted.</p>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<div class="title">Note</div>
+</td>
+<td class="content">
+<em>This is especially lethal when a too-small message destination is on the stack&#8212;&#8203;nothing like corrupting the return address of a function!</em>
+</td>
+</tr>
+</table>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_counting_semaphores">Counting Semaphores</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>ThreadX provides 32-bit counting semaphores that range in value between 0 and 4,294,967,295. There are two operations for counting semaphores: <em>tx_semaphore_get</em> and <em>tx_semaphore_put</em>. The get operation decreases the semaphore by one. If the semaphore is 0, the get operation is not successful. The inverse of the get operation is the put operation.
+It increases the semaphore by one.</p>
+</div>
+<div class="paragraph">
+<p>Each counting semaphore is a public resource. ThreadX places no constraints on how counting semaphores are used.</p>
+</div>
+<div class="paragraph">
+<p>Counting semaphores are typically used for <em>mutual exclusion</em>. However, counting semaphores can also be used as a method for event notification.</p>
+</div>
+<div class="sect2">
+<h3 id="_mutual_exclusion">Mutual Exclusion</h3>
+<div class="paragraph">
+<p>Mutual exclusion pertains to controlling the access of threads to certain application areas (also called <em>critical sections</em> or <em>application resources</em>). When used for mutual exclusion, the "current count" of a semaphore represents the total number of threads that are allowed access. In most cases, counting semaphores used for mutual exclusion will have an initial value of 1, meaning that only one thread can access the associated resource at a time. Counting semaphores that only have values of 0 or 1 are commonly called <em>binary semaphores</em>.</p>
+</div>
+<div class="admonitionblock important">
+<table>
+<tr>
+<td class="icon">
+<div class="title">Important</div>
+</td>
+<td class="content">
+<em>If a binary semaphore is being used, the user must prevent the same thread from performing a get operation on a semaphore it already owns. A second get would be unsuccessful and could cause indefinite suspension of the calling thread and permanent unavailability of the resource.</em>
+</td>
+</tr>
+</table>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_event_notification">Event Notification</h3>
+<div class="paragraph">
+<p>It is also possible to use counting semaphores as event notification, in a producer-consumer fashion. The consumer attempts to get the counting semaphore while the producer increases
+the semaphore whenever something is available. Such semaphores usually have an initial value of 0 and will not increase until the producer has something ready for the consumer. Semaphores used for event notification may also benefit from use of the <strong><em>tx_semaphore_ceiling_put</em></strong> service call. This service ensures that the semaphore count never exceeds the value supplied in the call.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_creating_counting_semaphores">Creating Counting Semaphores</h3>
+<div class="paragraph">
+<p>Counting semaphores are created either during initialization or during run-time by application threads. The initial count of the semaphore is specified during creation. There is no limit on the number of counting semaphores in an application.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_thread_suspension_2">Thread Suspension</h3>
+<div class="paragraph">
+<p>Application threads can suspend while attempting to perform a get operation on a semaphore with a current count of 0.</p>
+</div>
+<div class="paragraph">
+<p>After a put operation is performed, the suspended thread&#8217;s get operation is performed and the thread is resumed. If multiple threads are suspended on the same counting semaphore, they are resumed in the same order they were suspended (FIFO).</p>
+</div>
+<div class="paragraph">
+<p>However, priority resumption is also possible if the application calls <strong><em>tx_semaphore_prioritize</em></strong> prior to the semaphore put call that lifts thread suspension. The semaphore prioritize service places the highest priority thread at the front of the suspension list, while leaving all other suspended threads in the same FIFO order.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_semaphore_put_notification">Semaphore Put Notification</h3>
+<div class="paragraph">
+<p>Some applications may find it advantageous to be notified whenever a semaphore is put. ThreadX provides this ability through the <strong><em>tx_semaphore_put_notify</em></strong> service. This service registers the supplied application notification function with the specified semaphore. ThreadX will subsequently invoke this application notification function whenever the semaphore is put. The exact processing within the application notification function is determined by the application; however, it typically consists of resuming the appropriate thread for processing the new semaphore put event.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_semaphore_event_chaining">Semaphore Event chaining</h3>
+<div class="paragraph">
+<p>The notification capabilities in ThreadX can be used to chain various synchronization events together. This is typically useful when a single thread must process multiple synchronization events.</p>
+</div>
+<div class="paragraph">
+<p>For example, instead of having separate threads suspend for a queue message, event flags, and a semaphore, the application can register a notification routine for each object. When invoked, the application notification routine can then resume a single thread, which can interrogate each object to find and process the new event.</p>
+</div>
+<div class="paragraph">
+<p>In general, <em>event-chaining</em> results in fewer threads, less overhead, and smaller RAM requirements. It also provides a highly flexible mechanism to handle synchronization requirements of more complex systems.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_run_time_semaphore_performance_information">Run-time Semaphore Performance Information</h3>
+<div class="paragraph">
+<p>ThreadX provides optional run-time semaphore performance information. If the ThreadX library and application is built with <strong>TX_SEMAPHORE_ENABLE_PERFORMANCE_INFO</strong> defined, ThreadX accumulates the following information.</p>
+</div>
+<div class="paragraph">
+<p>Total number for the overall system:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>semaphore puts</p>
+</li>
+<li>
+<p>semaphore gets</p>
+</li>
+<li>
+<p>semaphore get suspensions</p>
+</li>
+<li>
+<p>semaphore get timeouts</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>Total number for each semaphore:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>semaphore puts</p>
+</li>
+<li>
+<p>semaphore gets</p>
+</li>
+<li>
+<p>semaphore get suspensions</p>
+</li>
+<li>
+<p>semaphore get timeouts</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>This information is available at run-time through the services <strong><em>tx_semaphore_performance_info_get</em></strong> and <strong><em>tx_semaphore_performance_system_info_get</em></strong>. Semaphore performance
+information is useful in determining if the application is behaving properly. It is also useful in optimizing the application. For example, a relatively high number of "semaphore get timeouts" might suggest that other threads are holding resources too long.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_semaphore_control_block_tx_semaphore">Semaphore Control Block TX_SEMAPHORE</h3>
+<div class="paragraph">
+<p>The characteristics of each counting semaphore are found in its control block. It contains information such as the current semaphore count. This structure is defined in the <strong><em>tx_api.h</em></strong> file.</p>
+</div>
+<div class="paragraph">
+<p>Semaphore control blocks can be located anywhere in memory, but it is most common to make the control block a global structure by defining it outside the scope of any function.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_deadly_embrace">Deadly Embrace</h3>
+<div class="paragraph">
+<p>One of the most interesting and dangerous pitfalls associated with semaphores used for mutual exclusion is the <em>deadly embrace</em>. A deadly embrace, or <em>deadlock</em>, is a condition in which two or more threads are suspended indefinitely while attempting to get semaphores already owned by each other.</p>
+</div>
+<div class="paragraph">
+<p>This condition is best illustrated by a two thread, two semaphore example. Suppose the first thread owns the first semaphore and the second thread owns the second semaphore. If the first thread attempts to get the second semaphore and at the same time the second thread attempts to get the first semaphore, both threads enter a deadlock condition. In addition, if these threads stay suspended forever, their associated resources are locked-out forever as well. Figure 8 illustrates this example.</p>
+</div>
+<div class="paragraph">
+<p><strong>Deadly Embrace</strong> (example)</p>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="./media/user-guide/example-suspended-threads.png" alt="Example of Suspended Threads">
+</div>
+</div>
+<div class="paragraph">
+<p><strong>FIGURE 8. Example of Suspended Threads</strong></p>
+</div>
+<div class="paragraph">
+<p>For real-time systems, deadly embraces can be prevented by placing certain restrictions on how threads obtain semaphores. Threads can only have one semaphore at a time. Alternatively, threads can own multiple semaphores if they gather them in the same order. In the previous example, if the first and second thread obtain the first and second semaphore in order, the deadly embrace is prevented.</p>
+</div>
+<div class="admonitionblock tip">
+<table>
+<tr>
+<td class="icon">
+<div class="title">Tip</div>
+</td>
+<td class="content">
+<em>It is also possible to use the suspension time-out associated with the get operation to recover from a deadly embrace.</em>
+</td>
+</tr>
+</table>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_priority_inversion">Priority Inversion</h3>
+<div class="paragraph">
+<p>Another pitfall associated with mutual exclusion semaphores is priority inversion. This topic is discussed more fully in "<a href="#thread-priority-pitfalls">Thread Priority Pitfalls</a>".</p>
+</div>
+<div class="paragraph">
+<p>The basic problem results from a situation in which a lower-priority thread has a semaphore that a higher priority thread needs. This in itself is normal. However, threads with priorities in between them may cause the priority inversion to last a nondeterministic amount of time. This can be handled through careful selection of thread priorities, using preemption-threshold, and temporarily raising the priority of the thread that owns the resource to that of the high priority thread.</p>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_mutexes">Mutexes</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>In addition to semaphores, ThreadX also provides a mutex object. A mutex is basically a binary semaphore, which means that only one thread can own a mutex at a time. In addition, the same thread may perform a successful mutex get operation on an owned mutex multiple times, 4,294,967,295 to be exact. There are two operations on the mutex object: <strong><em>tx_mutex_get</em></strong> and <strong><em>tx_mutex_put</em></strong>. The get operation obtains a mutex not owned by another thread, while the put operation releases a previously obtained mutex. For a thread to release a mutex, the number of put operations must equal the number of prior get operations.</p>
+</div>
+<div class="paragraph">
+<p>Each mutex is a public resource. ThreadX places no constraints on how mutexes are used.</p>
+</div>
+<div class="paragraph">
+<p>ThreadX mutexes are used solely for <em>mutual exclusion</em>. Unlike counting semaphores, mutexes have no use as a method for event notification.</p>
+</div>
+<div class="sect2">
+<h3 id="_mutex_mutual_exclusion">Mutex Mutual Exclusion</h3>
+<div class="paragraph">
+<p>Similar to the discussion in the counting semaphore section, mutual exclusion pertains to controlling the access of threads to certain application areas (also called <em>critical sections</em> or <em>application resources</em>). When available, a ThreadX mutex will have an ownership count of 0. After the mutex is obtained by a thread, the ownership count is incremented once for every successful get operation performed on the mutex and decremented for every successful put operation.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_creating_mutexes">Creating Mutexes</h3>
+<div class="paragraph">
+<p>ThreadX mutexes are created either during initialization or during run-time by application threads. The initial condition of a mutex is always "available." A mutex may also be created with <em>priority inheritance</em> selected.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_thread_suspension_3">Thread Suspension</h3>
+<div class="paragraph">
+<p>Application threads can suspend while attempting to perform a get operation on a mutex already owned by another thread.</p>
+</div>
+<div class="paragraph">
+<p>After the same number of put operations are performed by the owning thread, the suspended thread&#8217;s get operation is performed, giving it ownership of the mutex, and the thread is resumed. If multiple threads are suspended on the same mutex, they are resumed in the same order they were suspended (FIFO).</p>
+</div>
+<div class="paragraph">
+<p>However, priority resumption is done automatically if the mutex priority inheritance was selected during creation. Priority resumption is also possible if the application calls <strong><em>tx_mutex_prioritize</em></strong> prior to the mutex put call that lifts thread suspension. The mutex prioritize service places the highest priority thread at the front of the suspension list, while leaving all other suspended threads in the same FIFO order.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_run_time_mutex_performance_information">Run-time Mutex Performance Information</h3>
+<div class="paragraph">
+<p>ThreadX provides optional run-time mutex performance information. If the ThreadX library and application is built with <strong>TX_MUTEX_ENABLE_PERFORMANCE_INFO</strong> defined, ThreadX accumulates the following information.</p>
+</div>
+<div class="paragraph">
+<p>Total number for the overall system:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>mutex puts</p>
+</li>
+<li>
+<p>mutex gets</p>
+</li>
+<li>
+<p>mutex get suspensions</p>
+</li>
+<li>
+<p>mutex get timeouts</p>
+</li>
+<li>
+<p>mutex priority inversions</p>
+</li>
+<li>
+<p>mutex priority inheritances</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>Total number for each mutex:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>mutex puts</p>
+</li>
+<li>
+<p>mutex gets</p>
+</li>
+<li>
+<p>mutex get suspensions</p>
+</li>
+<li>
+<p>mutex get timeouts</p>
+</li>
+<li>
+<p>mutex priority inversions</p>
+</li>
+<li>
+<p>mutex priority inheritances</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>This information is available at run-time through the services <strong><em>tx_mutex_performance_info_get</em></strong> and <strong><em>tx_mutex_performance_system_info_get</em></strong>. Mutex performance information is useful in determining if the application is behaving properly. It is also useful in optimizing the application. For example, a relatively high number of "mutex get timeouts" might
+suggest that other threads are holding resources too long.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_mutex_control_block_tx_mutex">Mutex Control Block TX_MUTEX</h3>
+<div class="paragraph">
+<p>The characteristics of each mutex are found in its control block. It contains information such as the current mutex ownership count along with the pointer of the thread that owns the mutex. This structure is defined in the <strong><em>tx_api.h</em></strong> file. Mutex control blocks can be located anywhere in memory, but it is most common to make the control block a global structure by defining it outside the scope of any function.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_deadly_embrace_2">Deadly Embrace</h3>
+<div class="paragraph">
+<p>One of the most interesting and dangerous pitfalls associated with mutex ownership is the <em>deadly embrace</em>. A deadly embrace, or <em>deadlock</em>, is a condition where two or more threads are suspended indefinitely while attempting to get a mutex already owned by the other threads. The discussion of <em>deadly embrace</em> and its remedies are completely valid for the mutex object as well.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_priority_inversion_2">Priority Inversion</h3>
+<div class="paragraph">
+<p>As mentioned previously, a major pitfall associated with mutual exclusion is priority inversion. This topic is discussed more fully in "<a href="#thread-priority-pitfalls">Thread Priority Pitfalls</a>".</p>
+</div>
+<div class="paragraph">
+<p>The basic problem results from a situation in which a lower priority thread has a semaphore that a higher priority thread needs. This in itself is normal. However, threads with priorities in between them may cause the priority inversion to last a nondeterministic amount of time. Unlike semaphores discussed previously, the ThreadX mutex object has optional <em>priority inheritance</em>. The basic idea behind priority inheritance is that a lower priority thread has its priority raised temporarily to the priority of a high priority thread that wants the same mutex owned by the lower priority thread. When the lower priority thread releases the mutex, its original priority is then restored and the higher priority thread is given ownership of the mutex. This feature eliminates nondeterministic priority inversion by bounding the amount of inversion to the time the lower priority thread holds the mutex. Of course, the techniques discussed earlier in this chapter to handle nondeterministic priority inversion are also valid with mutexes
+as well.</p>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_event_flags">Event Flags</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Event flags provide a powerful tool for thread synchronization. Each event flag is represented by a single bit. Event flags are arranged in groups of 32. Threads can operate on all 32 event flags in a group at the same time. Events are set by <strong><em>tx_event_flags_set</em></strong> and are retrieved by <strong><em>tx_event_flags_get</em></strong>.</p>
+</div>
+<div class="paragraph">
+<p>Setting event flags is done with a logical AND/OR operation between the current event flags and the new event flags. The type of logical operation (either an AND or OR) is specified in the <strong><em>tx_event_flags_set</em></strong> call.</p>
+</div>
+<div class="paragraph">
+<p>There are similar logical options for retrieval of event flags. A get request can specify that all specified event flags are required (a logical AND).</p>
+</div>
+<div class="paragraph">
+<p>Alternatively, a get request can specify that any of the specified event flags will satisfy the request (a logical OR). The type of logical operation associated with event flags retrieval is specified in the <strong><em>tx_event_flags_get</em></strong> call.</p>
+</div>
+<div class="admonitionblock important">
+<table>
+<tr>
+<td class="icon">
+<div class="title">Important</div>
+</td>
+<td class="content">
+<em>Event flags that satisfy a get request are consumed, i.e., set to zero, if</em> <strong>TX_OR_CLEAR</strong> <em>or</em> <strong>TX_AND_CLEAR</strong> <em>are specified by the request.</em>
+</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>Each event flags group is a public resource. ThreadX places no constraints on how event flags groups are used.</p>
+</div>
+<div class="sect2">
+<h3 id="_creating_event_flags_groups">Creating Event Flags Groups</h3>
+<div class="paragraph">
+<p>Event flags groups are created either during initialization or during run-time by application threads. At the time of their creation, all event flags in the group are set to zero. There is no limit on the number of event flags groups in an application.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_thread_suspension_4">Thread Suspension</h3>
+<div class="paragraph">
+<p>Application threads can suspend while attempting to get any logical combination of event flags from a group. After an event flag is set, the get requests of all suspended threads are reviewed. All the threads that now have the required event flags are resumed.</p>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<div class="title">Note</div>
+</td>
+<td class="content">
+<em>All suspended threads on an event flag group are reviewed when its event flags are set. This, of course, introduces additional overhead. Therefore, it is good practice to limit the number of threads using the same event flag group to a reasonable number.</em>
+</td>
+</tr>
+</table>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_event_flags_set_notification">Event Flags Set Notification</h3>
+<div class="paragraph">
+<p>Some applications may find it advantageous to be notified whenever an event flag is set. ThreadX provides this ability through the <strong><em>tx_event_flags_set_notify</em></strong> service. This service registers the supplied application notification function with the specified event flags group. ThreadX will subsequently invoke this application notification function whenever an event flag in the group is set. The exact processing within the application notification function is determined by the application, but it typically consists of resuming the appropriate thread for processing the new event flag.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_event_flags_event_chaining">Event Flags Event chaining</h3>
+<div class="paragraph">
+<p>The notification capabilities in ThreadX can be used to "chain" various synchronization events together. This is typically useful when a single thread must process multiple synchronization events.</p>
+</div>
+<div class="paragraph">
+<p>For example, instead of having separate threads suspend for a queue message, event flags, and a semaphore, the application can register a notification routine for each object. When invoked, the application notification routine can then resume a single thread, which can interrogate each object to find and process the new event.</p>
+</div>
+<div class="paragraph">
+<p>In general, <em>event-chaining</em> results in fewer threads, less overhead, and smaller RAM requirements. It also provides a highly flexible mechanism to handle synchronization requirements of more complex systems.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_run_time_event_flags_performance_information">Run-time Event Flags Performance Information</h3>
+<div class="paragraph">
+<p>ThreadX provides optional run-time event flags performance information. If the ThreadX library and application is built with <strong>TX_EVENT_FLAGS_ENABLE_PERFORMANCE_INFO</strong> defined, ThreadX accumulates the following information.</p>
+</div>
+<div class="paragraph">
+<p>Total number for the overall system:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>event flags sets</p>
+</li>
+<li>
+<p>event flags gets</p>
+</li>
+<li>
+<p>event flags get suspensions</p>
+</li>
+<li>
+<p>event flags get timeouts</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>Total number for each event flags group:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>event flags sets</p>
+</li>
+<li>
+<p>event flags gets</p>
+</li>
+<li>
+<p>event flags get suspensions</p>
+</li>
+<li>
+<p>event flags get timeouts</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>This information is available at run-time through the services <strong><em>tx_event_flags_performance_info_get</em></strong> and <strong><em>tx_event_flags_performance_system_info_get</em></strong>. The performance information of event flags is useful in determining if the application is behaving properly. It is also useful in optimizing the application. For example, a relatively high number of timeouts on the <strong><em>tx_event_flags_get</em></strong> service might suggest that the event flags suspension timeout is too short.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_event_flags_group_control_block_tx_event_flags_group">Event Flags Group Control Block TX_EVENT_FLAGS_GROUP</h3>
+<div class="paragraph">
+<p>The characteristics of each event flags group are found in its control block. It contains information such as the current event flags settings and the number of threads suspended for events. This structure is defined in the <strong><em>tx_api.h</em></strong> file.</p>
+</div>
+<div class="paragraph">
+<p>Event group control blocks can be located anywhere in memory, but it is most common to make the control block a global structure by defining it outside the scope of any function.</p>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_memory_block_pools">Memory Block Pools</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Allocating memory in a fast and deterministic manner is always a challenge in real-time applications. With this in mind, ThreadX provides the ability to create and manage multiple pools of fixed-size memory blocks.</p>
+</div>
+<div class="paragraph">
+<p>Because memory block pools consist of fixed-size blocks, there are never any fragmentation problems. Of course, fragmentation causes behavior that is inherently nondeterministic. In addition, the time required to allocate and free a fixed-size memory block is comparable to that of simple linked-list manipulation. Furthermore, memory block allocation and de-allocation is done at the head of the available list. This provides the fastest possible linked list processing and might help keep the actual memory block in cache.</p>
+</div>
+<div class="paragraph">
+<p>Lack of flexibility is the main drawback of fixed-size memory pools. The block size of a pool must be large enough to handle the worst case memory requirements of its users. Of course, memory may be wasted if many different size memory requests are made to the same pool. A possible solution is to make several different memory block pools that contain different sized memory blocks.</p>
+</div>
+<div class="paragraph">
+<p>Each memory block pool is a public resource. ThreadX places no constraints on how pools are used.</p>
+</div>
+<div class="sect2">
+<h3 id="_creating_memory_block_pools">Creating Memory Block Pools</h3>
+<div class="paragraph">
+<p>Memory block pools are created either during initialization or during run-time by application threads. There is no limit on the number of memory block pools in an application.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_memory_block_size">Memory Block Size</h3>
+<div class="paragraph">
+<p>As mentioned earlier, memory block pools contain a number of fixed-size blocks. The block size, in bytes, is specified during creation of the pool.</p>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<div class="title">Note</div>
+</td>
+<td class="content">
+<em>ThreadX adds a small amount of overhead&#8212;&#8203;the size of a C pointer&#8212;&#8203;to each memory block in the pool. In addition, ThreadX might have to pad the block size to keep the beginning of each memory block on proper alignment.</em>
+</td>
+</tr>
+</table>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_pool_capacity">Pool Capacity</h3>
+<div class="paragraph">
+<p>The number of memory blocks in a pool is a function of
+the block size and the total number of bytes in the memory area supplied
+during creation. The capacity of a pool is calculated by dividing the
+block size
+(including padding and the
+pointer overhead bytes) into the total number of bytes in the supplied
+memory area.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_pools_memory_area">Pool&#8217;s Memory Area</h3>
+<div class="paragraph">
+<p>As mentioned before, the memory area for the block pool is specified during creation. Like other memory areas in ThreadX, it can be located anywhere in the target&#8217;s address space.</p>
+</div>
+<div class="paragraph">
+<p>This is an important feature because of the considerable flexibility it provides. For example, suppose that a communication product has a highspeed memory area for I/O. This memory area is easily managed by making it into a ThreadX memory block pool.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_thread_suspension_5">Thread Suspension</h3>
+<div class="paragraph">
+<p>Application threads can suspend while waiting for a memory block from an empty pool. When a block is returned to the pool, the suspended thread is given this block and the thread is resumed.</p>
+</div>
+<div class="paragraph">
+<p>If multiple threads are suspended on the same memory block pool, they are resumed in the order they were suspended (FIFO).</p>
+</div>
+<div class="paragraph">
+<p>However, priority resumption is also possible if the application calls <strong><em>tx_block_pool_prioritize</em></strong> prior to the block release call that lifts thread suspension. The block pool prioritize service places the highest priority thread at the front of the suspension list, while leaving all other suspended threads in the same FIFO order.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_run_time_block_pool_performance_information">Run-time Block Pool Performance Information</h3>
+<div class="paragraph">
+<p>ThreadX provides optional run-time block pool performance information. If the ThreadX library and application is built with <strong>TX_BLOCK_POOL_ENABLE_PERFORMANCE_INFO</strong> defined, ThreadX accumulates the following information.</p>
+</div>
+<div class="paragraph">
+<p>Total number for the overall system:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>blocks allocated</p>
+</li>
+<li>
+<p>blocks released</p>
+</li>
+<li>
+<p>allocation suspensions</p>
+</li>
+<li>
+<p>allocation timeouts</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>Total number for each block pool:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>blocks allocated</p>
+</li>
+<li>
+<p>blocks released</p>
+</li>
+<li>
+<p>allocation suspensions</p>
+</li>
+<li>
+<p>allocation timeouts</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>This information is available at run-time through the services <strong><em>tx_block_pool_performance_info_get</em></strong> and <strong><em>tx_block_pool_performance_system_info_get</em></strong>. Block pool performance information is useful in determining if the application is behaving properly. It is also useful in optimizing the application. For example, a relatively high number of "allocation suspensions" might suggest that the block pool is too small.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_memory_block_pool_control_block_tx_block_pool">Memory Block Pool Control Block TX_BLOCK_POOL</h3>
+<div class="paragraph">
+<p>The characteristics of each memory block pool are found in its control block. It contains information such as the number of memory blocks available and the memory pool block size. This structure is defined in the <strong><em>tx_api.h</em></strong> file.</p>
+</div>
+<div class="paragraph">
+<p>Pool control blocks can also be located anywhere in memory, but it is most common to make the control block a global structure by defining it outside the scope of any function.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_overwriting_memory_blocks">Overwriting Memory Blocks</h3>
+<div class="paragraph">
+<p>It is important to ensure that the user of an allocated memory block does not write outside its boundaries. If this happens, corruption occurs in an adjacent (usually subsequent) memory area. The results are unpredictable and often fatal to the application.</p>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_memory_byte_pools">Memory Byte Pools</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>ThreadX memory byte pools are similar to a standard C heap. Unlike the standard C heap, it is possible to have multiple memory byte pools. In addition, threads can suspend on a pool until the requested memory is available.</p>
+</div>
+<div class="paragraph">
+<p>Allocations from memory byte
+pools are similar to traditional <strong><em>malloc</em></strong> calls, which include the amount of memory desired (in bytes). Memory is allocated from the pool in a <em>first-fit</em> manner; i.e., the first free memory block that satisfies the request is used. Excess memory from this block is converted into a new block and placed back in the free memory list. This process is called <em>fragmentation</em>.</p>
+</div>
+<div class="paragraph">
+<p>Adjacent free memory blocks are <em>merged</em> together during a subsequent
+allocation search for a large enough free memory block. This process
+is called <em>defragmentation</em>.</p>
+</div>
+<div class="paragraph">
+<p>Each memory byte pool is a public resource. ThreadX places no
+constraints on how pools are used, except that memory byte services
+cannot be called from ISRs.</p>
+</div>
+<div class="sect2">
+<h3 id="_creating_memory_byte_pools">Creating Memory Byte Pools</h3>
+<div class="paragraph">
+<p>Memory byte pools are created either during
+initialization or during run-time by application threads. There
+is no limit on the number of memory byte pools in an application.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_pool_capacity_2">Pool Capacity</h3>
+<div class="paragraph">
+<p>The number of allocatable bytes in a memory byte pool is slightly less than what was specified during creation. This is because management of the free memory area introduces some overhead. Each free memory block in the pool requires the equivalent of two C pointers of overhead. In addition, the pool is created with two blocks, a large free block and a small permanently allocated block at the end of the memory area. This allocated block is used to improve performance of the allocation algorithm. It eliminates the need to continuously check for the end of the pool area during merging.</p>
+</div>
+<div class="paragraph">
+<p>During run-time, the amount of overhead in the pool typically increases. Allocations of an odd number of bytes are padded to ensure proper alignment of the next memory block. In addition, overhead increases as the pool becomes more fragmented.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_pools_memory_area_2">Pool&#8217;s Memory Area</h3>
+<div class="paragraph">
+<p>The memory area for a memory byte pool is specified during creation. Like other memory areas in ThreadX, it can be located anywhere in the target&#8217;s address space. This is an important feature because of the considerable flexibility it provides. For example, if the target hardware has a high-speed memory area and a low-speed memory area, the user can manage memory allocation for both areas by creating a pool in each of them.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_thread_suspension_6">Thread Suspension</h3>
+<div class="paragraph">
+<p>Application threads can suspend while waiting for memory bytes from a pool. When sufficient contiguous memory becomes available, the suspended threads are given their requested memory and the threads are resumed.</p>
+</div>
+<div class="paragraph">
+<p>If multiple threads are suspended on the same memory byte pool, they are given memory (resumed) in the order they were suspended (FIFO).</p>
+</div>
+<div class="paragraph">
+<p>However, priority resumption is also possible if the application calls <strong><em>tx_byte_pool_prioritize</em></strong> prior to the byte release call that lifts thread suspension. The byte pool prioritize service places the highest priority thread at the front of the suspension list, while leaving all other suspended threads in the same FIFO order.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_run_time_byte_pool_performance_information">Run-time Byte Pool Performance Information</h3>
+<div class="paragraph">
+<p>ThreadX provides optional run-time byte pool performance information. If the ThreadX library and application is built with <strong><em>TX_BYTE_POOL_ENABLE_PERFORMANCE_INFO</em></strong>
+defined, ThreadX accumulates the following information.</p>
+</div>
+<div class="paragraph">
+<p>Total number for the overall system:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>allocations</p>
+</li>
+<li>
+<p>releases</p>
+</li>
+<li>
+<p>fragments searched</p>
+</li>
+<li>
+<p>fragments merged</p>
+</li>
+<li>
+<p>fragments created</p>
+</li>
+<li>
+<p>allocation suspensions</p>
+</li>
+<li>
+<p>allocation timeouts</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>Total number for each byte pool:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>allocations</p>
+</li>
+<li>
+<p>releases</p>
+</li>
+<li>
+<p>fragments searched</p>
+</li>
+<li>
+<p>fragments merged</p>
+</li>
+<li>
+<p>fragments created</p>
+</li>
+<li>
+<p>allocation suspensions</p>
+</li>
+<li>
+<p>allocation timeouts</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>This information is available at run-time through the services <strong><em>tx_byte_pool_performance_info_get</em></strong> and <strong><em>tx_byte_pool_performance_system_info_get</em></strong>. Byte pool performance information is useful in determining if the application is behaving properly. It is also useful in optimizing the application. For example, a relatively high number of "allocation suspensions" might suggest that the byte pool is too small.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_memory_byte_pool_control_block_tx_byte_pool">Memory Byte Pool Control Block TX_BYTE_POOL</h3>
+<div class="paragraph">
+<p>The characteristics of each memory byte pool are found in its control block. It contains useful information such as the number of available bytes in the pool. This structure is defined in the <strong><em>tx_api.h</em></strong> file.</p>
+</div>
+<div class="paragraph">
+<p>Pool control blocks can also be located anywhere in memory, but it is most common to make the control block a global structure by defining it outside the scope of any function.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_nondeterministic_behavior">Nondeterministic Behavior</h3>
+<div class="paragraph">
+<p>Although memory byte pools provide the most flexible memory allocation, they also suffer from somewhat nondeterministic behavior. For example, a memory byte pool may have 2,000 bytes of memory available but may not be able to satisfy an allocation request of 1,000 bytes. This is because there are no guarantees on how many of the free bytes are contiguous. Even if a 1,000 byte free block exists, there are no guarantees on how long it might take to find the block. It is completely possible that the entire memory pool would need to be searched to find the 1,000 byte block.</p>
+</div>
+<div class="admonitionblock tip">
+<table>
+<tr>
+<td class="icon">
+<div class="title">Tip</div>
+</td>
+<td class="content">
+<em>As a result of the nondeterministic behavior of memory byte pools, it is generally good practice to avoid using memory byte services in areas where deterministic, real-time behavior is required. Many applications pre-allocate their required memory during initialization or run-time configuration.</em>
+</td>
+</tr>
+</table>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_overwriting_memory_blocks_2">Overwriting Memory Blocks</h3>
+<div class="paragraph">
+<p>It is important to ensure that the user of allocated memory does not write outside its boundaries. If this happens, corruption occurs in an adjacent (usually subsequent) memory area. The results are unpredictable and often catastrophic for program execution.</p>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_application_timers_2">Application Timers</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Fast response to asynchronous external events is the most important function of real-time, embedded applications. However, many of these applications must also perform certain activities at predetermined intervals of time.</p>
+</div>
+<div class="paragraph">
+<p>ThreadX application timers provide applications with the ability to execute application C functions at specific intervals of time. It is also possible for an application timer to expire only once. This type of timer is called a <em>one-shot timer</em>, while repeating interval timers are called <em>periodic timers</em>.</p>
+</div>
+<div class="paragraph">
+<p>Each application timer is a public resource. ThreadX places no constraints on how application timers are used.</p>
+</div>
+<div class="sect2">
+<h3 id="_timer_intervals">Timer Intervals</h3>
+<div class="paragraph">
+<p>In ThreadX time intervals are measured by periodic timer interrupts. Each timer interrupt is called a timer <em>tick</em>. The actual time between timer ticks is specified by the application, but 10ms is the norm for most implementations. The periodic timer setup is typically found in the <strong><em>tx_initialize_low_level</em></strong> assembly file.</p>
+</div>
+<div class="paragraph">
+<p>It is worth mentioning that the underlying hardware must have the ability to generate periodic interrupts for application timers to function. In some cases, the processor has a built-in periodic interrupt capability. If the processor doesn&#8217;t have this ability, the user&#8217;s board must have a peripheral device that can generate periodic interrupts.</p>
+</div>
+<div class="admonitionblock important">
+<table>
+<tr>
+<td class="icon">
+<div class="title">Important</div>
+</td>
+<td class="content">
+<em>ThreadX can still function even without a periodic interrupt source. However, all timer-related processing is then disabled. This includes timeslicing, suspension time-outs, and timer services.</em>
+</td>
+</tr>
+</table>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_timer_accuracy">Timer Accuracy</h3>
+<div class="paragraph">
+<p>Timer expirations are specified in terms of ticks. The specified expiration value is decreased by one on each timer tick. Because an application timer could be enabled just prior to a timer interrupt (or timer tick), the actual expiration time could be up to one tick early.</p>
+</div>
+<div class="paragraph">
+<p>If the timer tick rate is 10ms, application timers may expire up to 10ms early. This is more significant for 10ms timers than 1 second timers. Of course, increasing the timer interrupt frequency decreases this margin of error.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_timer_execution">Timer Execution</h3>
+<div class="paragraph">
+<p>Application timers execute in the order they become active. For example, if three timers are created with the same expiration value and activated, their corresponding expiration functions are guaranteed to execute in the order they were activated.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_creating_application_timers">Creating Application Timers</h3>
+<div class="paragraph">
+<p>Application timers are created either during initialization or during run-time by application threads. There is no limit on the number of application timers in an application.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_run_time_application_timer_performance_information">Run-time Application Timer Performance Information</h3>
+<div class="paragraph">
+<p>ThreadX provides optional run-time application timer performance information. If the ThreadX library and application are built with <strong>TX_TIMER_ENABLE_PERFORMANCE_INFO</strong> defined, ThreadX accumulates the following information.</p>
+</div>
+<div class="paragraph">
+<p>Total number for the overall system:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>activations</p>
+</li>
+<li>
+<p>deactivations</p>
+</li>
+<li>
+<p>reactivations (periodic timers)</p>
+</li>
+<li>
+<p>expirations</p>
+</li>
+<li>
+<p>expiration adjustments</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>Total number for each application timer:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>activations</p>
+</li>
+<li>
+<p>deactivations</p>
+</li>
+<li>
+<p>reactivations (periodic timers)</p>
+</li>
+<li>
+<p>expirations</p>
+</li>
+<li>
+<p>expiration adjustments</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>This information is available at run-time through the services <strong><em>tx_timer_performance_info_get</em></strong> and <strong><em>tx_timer_performance_system_info_get</em></strong>. Application Timer performance information is useful in determining if the application is behaving properly. It is also useful in optimizing the application.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_application_timer_control_block_tx_timer">Application Timer Control Block TX_TIMER</h3>
+<div class="paragraph">
+<p>The characteristics of each application timer are found in its control block. It contains useful information such as the 32-bit expiration identification value. This structure is defined in the <strong><em>tx_api.h</em></strong> file.</p>
+</div>
+<div class="paragraph">
+<p>Application timer control blocks can be located anywhere in memory, but it is most common to make the control block a global structure by defining it outside the scope of any function.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_excessive_timers">Excessive Timers</h3>
+<div class="paragraph">
+<p>By default, application timers execute from within a hidden system thread that runs at priority zero, which is typically higher than any application thread. Because of this, processing inside application timers should be kept to a minimum.</p>
+</div>
+<div class="paragraph">
+<p>It is also important to avoid, whenever possible, timers that expire every timer tick. Such a situation might induce excessive overhead in the application.</p>
+</div>
+<div class="admonitionblock important">
+<table>
+<tr>
+<td class="icon">
+<div class="title">Important</div>
+</td>
+<td class="content">
+<em>As mentioned previously, application timers are executed from a hidden system thread. It is, therefore, important not to select suspension on any ThreadX service calls made from within the application timer&#8217;s expiration function.</em>
+</td>
+</tr>
+</table>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_relative_time">Relative Time</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>In addition to the application timers mentioned previously, ThreadX provides a single continuously incrementing 32-bit tick counter. The tick counter or <em>time</em> is increased by one on each timer interrupt.</p>
+</div>
+<div class="paragraph">
+<p>The application can read or set this 32-bit counter through calls to <strong><em>tx_time_get</em></strong> and <strong><em>tx_time_set</em></strong>, respectively. The use of this tick counter is determined completely by the application. It is not used internally by ThreadX.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_interrupts_2">Interrupts</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Fast response to asynchronous events is the principal function of real-time, embedded applications. The application knows such an event is present through hardware interrupts.</p>
+</div>
+<div class="paragraph">
+<p>An interrupt is an asynchronous change in processor execution. Typically, when an interrupt occurs, the <em>Interrupts</em> processor saves a small portion of the current execution on the stack and transfers control to the appropriate interrupt vector. The interrupt vector is basically just the address of the routine responsible for handling the specific type interrupt. The exact interrupt handling procedure is processor specific.</p>
+</div>
+<div class="sect2">
+<h3 id="_interrupt_control">Interrupt Control</h3>
+<div class="paragraph">
+<p>The <strong><em>tx_interrupt_control</em></strong> service allows applications to enable and disable interrupts. The previous interrupt enable/disable posture is returned by this service. It is important to mention that interrupt control only affects the currently executing program segment. For example, if a thread disables interrupts, they only remain disabled during execution of that thread.</p>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<div class="title">Note</div>
+</td>
+<td class="content">
+<em>A Non-Maskable Interrupt (NMI) is an interrupt that cannot be disabled by the hardware. Such an interrupt may be used by ThreadX applications. However, the application&#8217;s NMI handling routine is not allowed to use ThreadX context management or any API services.</em>
+</td>
+</tr>
+</table>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_threadx_managed_interrupts">ThreadX Managed Interrupts</h3>
+<div class="paragraph">
+<p>ThreadX provides applications with complete interrupt management. This management includes saving and restoring the context of the interrupted execution. In addition, ThreadX allows certain services to be called from within Interrupt Service Routines (ISRs). The following is a list of ThreadX services allowed from application ISRs.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-c" data-lang="c">tx_block_allocate
+tx_block_pool_info_get tx_block_pool_prioritize
+tx_block_pool_performance_info_get
+tx_block_pool_performance_system_info_get tx_block_release
+tx_byte_pool_info_get tx_byte_pool_performance_info_get
+tx_byte_pool_performance_system_info_get
+tx_byte_pool_prioritize tx_event_flags_info_get
+tx_event_flags_get tx_event_flags_set
+tx_event_flags_performance_info_get
+tx_event_flags_performance_system_info_get
+tx_event_flags_set_notify tx_interrupt_control
+tx_mutex_performance_info_get
+tx_mutex_performance_system_info_get tx_queue_front_send
+tx_queue_info_get tx_queue_performance_info_get
+tx_queue_performance_system_info_get tx_queue_prioritize
+tx_queue_receive tx_queue_send tx_semaphore_get
+tx_queue_send_notify tx_semaphore_ceiling_put
+tx_semaphore_info_get tx_semaphore_performance_info_get
+tx_semaphore_performance_system_info_get
+tx_semaphore_prioritize tx_semaphore_put tx_thread_identify
+tx_semaphore_put_notify tx_thread_entry_exit_notify
+tx_thread_info_get tx_thread_resume
+tx_thread_performance_info_get
+tx_thread_performance_system_info_get
+tx_thread_stack_error_notify tx_thread_wait_abort tx_time_get
+tx_time_set tx_timer_activate tx_timer_change
+tx_timer_deactivate tx_timer_info_get
+tx_timer_performance_info_get
+tx_timer_performance_system_info_get</code></pre>
+</div>
+</div>
+<div class="admonitionblock important">
+<table>
+<tr>
+<td class="icon">
+<div class="title">Important</div>
+</td>
+<td class="content">
+<em>Suspension is not allowed from ISRs. Therefore, the <strong>wait_option</strong> parameter for all ThreadX service calls made from an ISR must be set to <strong>TX_NO_WAIT</strong>.</em>
+</td>
+</tr>
+</table>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_isr_template">ISR Template</h3>
+<div class="paragraph">
+<p>To manage application interrupts, several ThreadX utilities must be called in the beginning and end of application ISRs. The exact format for interrupt handling varies between ports.</p>
+</div>
+<div class="paragraph">
+<p>The following small code segment is typical of most ThreadX managed ISRs. In most cases, this processing is in assembly language.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-c" data-lang="c">_application_ISR_vector_entry:
+
+; Save context and prepare for
+
+; ThreadX use by calling the ISR
+
+; entry function.
+
+CALL _tx_thread_context_save
+
+; The ISR can now call ThreadX
+
+; services and its own C functions
+
+; When the ISR is finished, context
+
+; is restored (or thread preemption)
+
+; by calling the context restore ; function. Control does not return!
+
+JUMP _tx_thread_context_restore</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_high_frequency_interrupts">High-frequency Interrupts</h3>
+<div class="paragraph">
+<p>Some interrupts occur at such a high frequency that saving and restoring full context upon each interrupt would consume excessive processing bandwidth. In such cases, it is common for the application to have a small assembly language ISR that does a limited amount of processing for a majority of these high-frequency interrupts.</p>
+</div>
+<div class="paragraph">
+<p>After a certain point in time, the small ISR may need to interact with ThreadX. This is accomplished by calling the entry and exit functions described in the above template.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_interrupt_latency">Interrupt Latency</h3>
+<div class="paragraph">
+<p>ThreadX locks out interrupts over brief periods of time. The maximum amount of time interrupts are disabled is on the order of the time required to save or restore a thread&#8217;s context.</p>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div id="footer">
+<div id="footer-text">
+Last updated 2024-12-19 22:09:56 -0500
+</div>
+</div>
+</body>
+</html>
